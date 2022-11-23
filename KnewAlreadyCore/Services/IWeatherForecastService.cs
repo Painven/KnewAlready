@@ -1,8 +1,8 @@
-using KnewAlreadyWebApp.Dtos;
+using KnewAlreadyCore.Dtos;
 
 namespace KnewAlreadyWebApp.Data;
 
-public interface IWeatherForecastService
+public interface IAnswerShareApi
 {
-    Task<WeatherForecastDto[]> GetForecasts();
+    Task<AnswerShareResponseDto> Send(AnswerShareRequestDto data);
 }

@@ -1,13 +1,22 @@
+using KnewAlreadyCore.Dtos;
 using KnewAlreadyWebApp.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace KnewAlreadyAPI.Controllers;
 
 [ApiController]
-[Route("api/forecasts")]
+[Route("api/answer-share")]
 public class WeatherForecastController : ControllerBase
 {
     private readonly ILogger<WeatherForecastController> _logger;
+
+    private readonly Dictionary<string, string> activeApiKeys = new ()
+    {
+        ["661b4931-29fa-4ed3-b40e-c8377132170d"] = "painven",
+        ["651b4931-29fa-4ed3-b40e-c8377132170d"] = "test user",
+    };
 
     public WeatherForecastController(ILogger<WeatherForecastController> logger)
     {
@@ -15,17 +24,19 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<WeatherForecastDto> GetAll()
+    public IEnumerable<AnswerShareResponseDto> GetAll()
     {
-        var data = Enumerable.Range(0, 100)
-            .Select(i => new WeatherForecastDto()
-            {
-                Date = DateTime.Now.AddDays(-i),
-                Summary = i.ToString(),
-                TemperatureC = 100 - i
-            })
-            .ToArray();
+        
+    }
 
-        return data;
+    [HttpPost]
+    public AnswerShareResponseDto Send([FromBody]AnswerShareRequestDto data)
+    {
+        
+        AnswerShareResponseDto response = new AnswerShareResponseDto();
+
+
+        _logger.LogInformation($"Запрос получен: {JsonSerializer.Serialize(data)}");
+        _logger.LogInformation($"Ответ отправлен: {JsonSerializer.Serialize(response)}");
     }
 }

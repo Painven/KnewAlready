@@ -14,7 +14,7 @@ builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
     httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
 });
 
-builder.Services.AddSingleton<IWeatherForecastService, WeatherForecastService>();
+builder.Services.AddSingleton<IWeatherForecastService, AnswerShareApiService>();
 
 var app = builder.Build();
 
