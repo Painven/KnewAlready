@@ -1,9 +1,7 @@
 ﻿@page "/fetchdata"
+@inject IWeatherForecastService testService
 
 <PageTitle>Weather forecast</PageTitle>
-
-@using KnewAlreadyWebApp.Data
-@inject WeatherForecastService ForecastService
 
 <h1>Weather forecast</h1>
 
@@ -11,16 +9,16 @@
 
 @if (forecasts == null)
 {
-    <p><em>Loading...</em></p>
+    <LoadingSpinner />
 }
 else
 {
+    <div class="table-responsive">
     <table class="table">
-        <thead>
+        <thead class="thead-dark">
             <tr>
                 <th>Date</th>
                 <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
                 <th>Summary</th>
             </tr>
         </thead>
@@ -30,19 +28,20 @@ else
                 <tr>
                     <td>@forecast.Date.ToShortDateString()</td>
                     <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
                     <td>@forecast.Summary</td>
                 </tr>
             }
         </tbody>
     </table>
+    </div>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private WeatherForecastDto[]? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        await Task.Delay(TimeSpan.FromSeconds(1.6));
+        forecasts = await testService.GetForecasts();
     }
 }

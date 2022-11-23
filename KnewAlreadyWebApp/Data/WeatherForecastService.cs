@@ -1,19 +1,23 @@
+using KnewAlreadyWebApp.Dtos;
+using System.Net.Http.Json;
+
 namespace KnewAlreadyWebApp.Data;
 
-public class WeatherForecastService
+public class WeatherForecastService : IWeatherForecastService
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+    private readonly IHttpClientFactory httpClientFactory;
 
-    public Task<WeatherForecast[]> GetForecastAsync(DateTime startDate)
+    public WeatherForecastService(IHttpClientFactory httpClientFactory)
     {
-        return Task.FromResult(Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        }).ToArray());
+        this.httpClientFactory = httpClientFactory;
+    }
+
+    public async Task<WeatherForecastDto[]> GetForecasts()
+    {
+        var client = httpClientFactory.CreateClient("KnewAlreadyAPI");
+
+        var data = await client.GetFromJsonAsync<WeatherForecastDto[]>("api/forecasts");
+
+        return data;
     }
 }

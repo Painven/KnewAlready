@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnewAlreadyWebApp", "KnewAl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnewAlreadyAPI", "KnewAlreadyAPI\KnewAlreadyAPI.csproj", "{CF1B462C-7530-475B-B356-E582DB656BEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnewAlreadyCore", "KnewAlreadyCore\KnewAlreadyCore.csproj", "{49974EBF-1320-48A8-96E6-786A03B8AAAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{CF1B462C-7530-475B-B356-E582DB656BEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF1B462C-7530-475B-B356-E582DB656BEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF1B462C-7530-475B-B356-E582DB656BEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49974EBF-1320-48A8-96E6-786A03B8AAAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49974EBF-1320-48A8-96E6-786A03B8AAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49974EBF-1320-48A8-96E6-786A03B8AAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49974EBF-1320-48A8-96E6-786A03B8AAAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
