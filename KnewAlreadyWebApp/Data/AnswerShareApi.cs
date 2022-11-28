@@ -1,5 +1,4 @@
 using KnewAlreadyCore.Dtos;
-using KnewAlreadyWebApp.Dtos;
 using System.Net.Http.Json;
 
 namespace KnewAlreadyWebApp.Data;

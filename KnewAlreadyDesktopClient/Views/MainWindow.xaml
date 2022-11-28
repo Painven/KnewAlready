@@ -1,0 +1,38 @@
+﻿<Window x:Class="KnewAlreadyDesktopClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:KnewAlreadyDesktopClient.ViewModels"
+        xmlns:icons="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d"
+        SizeToContent="WidthAndHeight" MinWidth="300"
+        d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
+        Title="KA Desktop">
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="API" />
+            <ComboBox SelectedValue="{Binding SelectedProfile}">
+                <ComboBoxItem>18EE7916-7DF1-4189-AD5C-3F9E19A09DFC</ComboBoxItem>
+                <ComboBoxItem>1B2F3006-61A4-4293-A835-7AD4616B1F29</ComboBoxItem>
+            </ComboBox>
+            <TextBlock Text="Категория" />
+            <ComboBox SelectedValue="{Binding SelectedCategory}">
+                <ComboBoxItem>Test category1</ComboBoxItem>
+                <ComboBoxItem>Test category2</ComboBoxItem>
+                <ComboBoxItem>Test category3</ComboBoxItem>
+            </ComboBox>
+            <TextBlock Text="Длительность ожидания" />
+            <ComboBox SelectedValue="{Binding SelectedTimeRange}">
+                <ComboBoxItem>5 м.</ComboBoxItem>
+                <ComboBoxItem>15 м.</ComboBoxItem>
+                <ComboBoxItem>45 м.</ComboBoxItem>
+                <ComboBoxItem>1 ч.</ComboBoxItem>
+                <ComboBoxItem>6 ч.</ComboBoxItem>
+                <ComboBoxItem>12ч.</ComboBoxItem>
+                <ComboBoxItem>24 ч.</ComboBoxItem>
+            </ComboBox>
+            <Button Command="{Binding SendCommand}" Content="SEND" Margin="0 20 0 0"/>
+        </StackPanel>
+    </Grid>
+</Window>

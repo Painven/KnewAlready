@@ -1,5 +1,4 @@
 using KnewAlreadyCore.Dtos;
-using KnewAlreadyWebApp.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,11 +11,7 @@ public class WeatherForecastController : ControllerBase
 {
     private readonly ILogger<WeatherForecastController> _logger;
 
-    private readonly Dictionary<string, string> activeApiKeys = new ()
-    {
-        ["661b4931-29fa-4ed3-b40e-c8377132170d"] = "painven",
-        ["651b4931-29fa-4ed3-b40e-c8377132170d"] = "test user",
-    };
+    private readonly Dictionary<string, string> activeApiKeys;
 
     public WeatherForecastController(ILogger<WeatherForecastController> logger)
     {
@@ -26,13 +21,13 @@ public class WeatherForecastController : ControllerBase
     [HttpGet]
     public IEnumerable<AnswerShareResponseDto> GetAll()
     {
-        
+        throw new NotImplementedException();
     }
 
     [HttpPost]
     public AnswerShareResponseDto Send([FromBody]AnswerShareRequestDto data)
     {
-        
+        throw new NotImplementedException();
         AnswerShareResponseDto response = new AnswerShareResponseDto();
 
 

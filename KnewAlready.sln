@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnewAlreadyWebApp", "KnewAlreadyWebApp\KnewAlreadyWebApp.csproj", "{6D006D60-EFAF-447D-8B3A-0B4AC3F5CFA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KnewAlreadyWebApp", "KnewAlreadyWebApp\KnewAlreadyWebApp.csproj", "{6D006D60-EFAF-447D-8B3A-0B4AC3F5CFA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnewAlreadyAPI", "KnewAlreadyAPI\KnewAlreadyAPI.csproj", "{CF1B462C-7530-475B-B356-E582DB656BEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KnewAlreadyAPI", "KnewAlreadyAPI\KnewAlreadyAPI.csproj", "{CF1B462C-7530-475B-B356-E582DB656BEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnewAlreadyCore", "KnewAlreadyCore\KnewAlreadyCore.csproj", "{49974EBF-1320-48A8-96E6-786A03B8AAAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KnewAlreadyCore", "KnewAlreadyCore\KnewAlreadyCore.csproj", "{49974EBF-1320-48A8-96E6-786A03B8AAAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnewAlreadyDesktopClient", "KnewAlreadyDesktopClient\KnewAlreadyDesktopClient.csproj", "{B72D78FC-78B9-4681-AB30-629B87EAAB4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{49974EBF-1320-48A8-96E6-786A03B8AAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49974EBF-1320-48A8-96E6-786A03B8AAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49974EBF-1320-48A8-96E6-786A03B8AAAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B72D78FC-78B9-4681-AB30-629B87EAAB4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B72D78FC-78B9-4681-AB30-629B87EAAB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B72D78FC-78B9-4681-AB30-629B87EAAB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B72D78FC-78B9-4681-AB30-629B87EAAB4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
