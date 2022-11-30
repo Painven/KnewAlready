@@ -1,18 +1,28 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
 namespace KnewAlreadyDesktopClient.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
-    public ICommand SendCommand { get; }
+    private readonly generatedApiClient apiClient;
 
-    string selectedProfile;
-    public string SelectedProfile
+    public ICommand SendCommand { get; }
+    
+    string selectedTargetUsername;
+    public string SelectedTargetUsername
     {
-        get => selectedProfile;
-        set => Set(ref selectedProfile, value);
+        get => selectedTargetUsername;
+        set => Set(ref selectedTargetUsername, value);
+    }
+
+    string selectedProfileApiKey;
+    public string SelectedProfileApiKey
+    {
+        get => selectedProfileApiKey;
+        set => Set(ref selectedProfileApiKey, value);
     }
 
     string selectedCategory;
@@ -23,6 +33,7 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     string selectedTimeRange;
+ 
     public string SelectedTimeRange
     {
         get => selectedTimeRange;
@@ -34,17 +45,29 @@ public class MainWindowViewModel : ViewModelBase
         SendCommand = new LambdaCommand(Send, CanSend);
     }
 
+    public MainWindowViewModel(generatedApiClient apiClient) : this()
+    {      
+        this.apiClient = apiClient;
+    }
+
     private void Send(object obj)
     {
-        MessageBox.Show($"Отправляем от имени {SelectedProfile}: Категория [{SelectedCategory}] - длительность {SelectedTimeRange}");
+        string msg = new StringBuilder()
+            .AppendLine($"Отправка {SelectedProfileApiKey} -> {SelectedTargetUsername}")
+            .AppendLine($"Категория: {SelectedCategory}")
+            .Append($"Лимит по времени: {SelectedTimeRange}")
+            .ToString();
+
+        MessageBox.Show(msg);
     }
 
     private bool CanSend(object arg)
     {
-        return new[] { 
-            SelectedProfile, 
+        return new[] {
+            SelectedProfileApiKey, 
             SelectedCategory, 
-            SelectedTimeRange 
+            SelectedTimeRange,
+            SelectedTargetUsername
         }
         .All(str => !string.IsNullOrWhiteSpace(str));
     }

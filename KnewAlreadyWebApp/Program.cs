@@ -1,6 +1,4 @@
-using KnewAlreadyWebApp.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using KnewAlreadyWebApp;
 using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,11 +8,11 @@ builder.Services.AddServerSideBlazor();
 
 builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
 {
-    httpClient.BaseAddress = new Uri("https://localhost:7052/");
+    httpClient.BaseAddress = new Uri("https://localhost:7053/");
     httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
 });
 
-builder.Services.AddSingleton<IWeatherForecastService, AnswerShareApiService>();
+builder.Services.AddSingleton<KnewAlreadyApiHttpClient>(x => new KnewAlreadyApiHttpClient("https://localhost:7052/", new HttpClient()));
 
 var app = builder.Build();
 

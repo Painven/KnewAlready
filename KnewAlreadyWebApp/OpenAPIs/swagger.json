@@ -1,0 +1,187 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "KnewAlreadyAPI",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/suggest-actions": {
+      "get": {
+        "tags": [
+          "SuggestAction"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SuggestActionRequestDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SuggestActionRequestDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SuggestActionRequestDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SuggestAction"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestActionRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestActionRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestActionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestActionResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestActionResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestActionResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SuggestActionRequestDto": {
+        "type": "object",
+        "properties": {
+          "senderApiKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "targetUsername": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeLimit": {
+            "$ref": "#/components/schemas/TimeSpan"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuggestActionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeSpan": {
+        "type": "object",
+        "properties": {
+          "ticks": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "days": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "milliseconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "seconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalDays": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalHours": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMilliseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMinutes": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalSeconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
