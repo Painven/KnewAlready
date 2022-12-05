@@ -1,4 +1,5 @@
-using KnewAlreadyAPI.Models;
+using KnewAlreadyAPI;
+using KnewAlreadyAPI.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 

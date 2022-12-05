@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KnewAlreadyCore.Dtos;
+namespace KnewAlreadyAPI.Dtos;
 
 public class SuggestActionItemDto
 {

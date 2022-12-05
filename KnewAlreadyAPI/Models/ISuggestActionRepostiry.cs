@@ -1,6 +1,6 @@
-﻿using KnewAlreadyCore.Dtos;
+﻿using KnewAlreadyAPI.Dtos;
 
-namespace KnewAlreadyAPI.Models;
+namespace KnewAlreadyAPI;
 
 public interface ISuggestActionRepository
 {

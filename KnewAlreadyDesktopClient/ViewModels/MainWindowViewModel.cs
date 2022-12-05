@@ -1,13 +1,15 @@
-﻿using System;
+﻿using KnewAlreadyCore;
+using System;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
 namespace KnewAlreadyDesktopClient.ViewModels;
+
 public class MainWindowViewModel : ViewModelBase
 {
-    private readonly generatedApiClient apiClient;
+    private readonly KnewAlreadyApiHttpClient apiClient;
 
     public ICommand SendCommand { get; }
     
@@ -45,7 +47,7 @@ public class MainWindowViewModel : ViewModelBase
         SendCommand = new LambdaCommand(Send, CanSend);
     }
 
-    public MainWindowViewModel(generatedApiClient apiClient) : this()
+    public MainWindowViewModel(KnewAlreadyApiHttpClient apiClient) : this()
     {      
         this.apiClient = apiClient;
     }

@@ -1,5 +1,4 @@
-using KnewAlreadyAPI.Models;
-using KnewAlreadyCore.Dtos;
+using KnewAlreadyAPI.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -11,21 +10,34 @@ namespace KnewAlreadyAPI.Controllers;
 public class SuggestActionController : ControllerBase
 {
     private readonly ISuggestActionRepository repository;
+    private readonly ILogger<SuggestActionController> logger;
 
-    public SuggestActionController(ISuggestActionRepository repository)
+    public SuggestActionController(ISuggestActionRepository repository, ILogger<SuggestActionController> logger)
     {
         this.repository = repository;
+        this.logger = logger;
     }
 
-    [HttpGet]
     public async Task<IEnumerable<SuggestActionItemDto>> GetAll()
     {
-        return await repository.GetAll();
+        logger.LogInformation("GET: GetAll");
+
+        var data = await repository.GetAll();
+
+        return data;
     }
 
     [HttpPost]
-    public SuggestActionResponseDto Send([FromBody]SuggestActionRequestDto requestData)
+    public async Task<SuggestActionResponseDto> Send([FromBody]SuggestActionRequestDto requestData)
     {
+        logger.LogInformation("POST: Send");
+
+        var isAlreadyCreated = (await repository.GetAll());
+
+        await repository.Create(requestData);
+
         throw new NotImplementedException();
     }
+
+
 }

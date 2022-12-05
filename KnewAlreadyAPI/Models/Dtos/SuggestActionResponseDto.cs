@@ -1,4 +1,4 @@
-﻿namespace KnewAlreadyCore.Dtos;
+﻿namespace KnewAlreadyAPI.Dtos;
 
 public record SuggestActionResponseDto
 {

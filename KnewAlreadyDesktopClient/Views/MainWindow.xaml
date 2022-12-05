@@ -3,12 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:KnewAlreadyDesktopClient.ViewModels"
-        xmlns:icons="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:vm="clr-namespace:KnewAlreadyDesktopClient.ViewModels"     
+        SizeToContent="WidthAndHeight" 
         mc:Ignorable="d"
-        SizeToContent="WidthAndHeight" MinWidth="300"
-        d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
-        Title="KA Desktop">
+        Title="KA Desktop" Height="237" Width="393">
     <Grid Margin="20">
         <StackPanel>
             
@@ -50,6 +48,7 @@
                 <ComboBoxItem>24 ч.</ComboBoxItem>
             </ComboBox>
             <Button Command="{Binding SendCommand}" Content="SEND" Margin="0 20 0 0"/>
+        
         </StackPanel>
     </Grid>
 </Window>

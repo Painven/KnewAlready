@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KnewAlreadyCore.Dtos;
+namespace KnewAlreadyAPI.Dtos;
 
 public record SuggestActionUserDto
 {
     public Guid Id { get; init; }
-    public string Username { get; init; }
+    public string Login { get; init; }
 }

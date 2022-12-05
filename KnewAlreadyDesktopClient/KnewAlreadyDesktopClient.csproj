@@ -8,16 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="OpenAPIs\Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <OpenApiReference Include="OpenAPIs\swagger.json" CodeGenerator="NSwagCSharp" ClassName="generatedApiClient">
-      <SourceUri>https://localhost:7052/swagger/v1/swagger.json</SourceUri>
-    </OpenApiReference>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MahApps.Metro.IconPacks.FontAwesome" Version="4.11.0" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -28,6 +18,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KnewAlreadyCore\KnewAlreadyCore.csproj" />
   </ItemGroup>
 
 </Project>
