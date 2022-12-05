@@ -1,8 +1,24 @@
 ﻿@page "/"
+@using KnewAlreadyWebApp.Data
 @inject KnewAlreadyApiHttpClient apiClient
 
 <PageTitle>Index</PageTitle>
 
+<div class="suggest-action-tool-panel my-2">
+    <div class="btn-group" role="group">
+        <button class="btn btn-secondary p-2" @onclick="(e => LoadTestData())">
+            <span class="oi oi-cloud"></span>
+            Обновить
+        </button>
+        <button class="btn btn-warning p-2" 
+            disabled=@(data.Count == 0)
+            @onclick="(e => { data.Clear(); StateHasChanged(); } )">
+            <span class="oi oi-trash"></span>
+            Очистить
+        </button>
+
+    </div>
+</div>
 
 <h2>Все запросы</h2>
 <div class="suggest-action-list">
@@ -11,10 +27,11 @@
         @foreach(var item in data)
         {
             <div class="suggest-action-item">
+                <p>Создан: <span>@item.Created</span></p>
                 <h3>@item.CategoryName</h3>
                 <div class="suggest-action-item-inner">
                     <p>@item.InitiatorUsername</p>
-                    <img src=@("/assets/images/" + (item.IsCompleted ? "stock_lock-ok.png" : "stock_lock-brocken.png")) >
+                    <span class=@("fa " + (item.IsCompleted ? "fa-hands-helping completed" : "fa-question"))></span>
                     <p>@item.AcceptorUsername</p>
                 </div>
             </div>
@@ -27,96 +44,29 @@
 </div>
 
 
-<style>
-    .suggest-action-list {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 16px;           
-    }
-    .suggest-action-item {
-        flex: 1 0 auto;
-        background: linear-gradient(45deg, #8b8dbf, #415c6c);
-        box-shadow: 3px 3px 6px rgb(114 151 209 / 60%);
-        border: 1px solid #8c9f9c;
-        border-radius: 6px;
-        padding: 10px 15px;
-        color: white;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: stretch;
-    }
-    .suggest-action-item:hover {
-        border: 1px solid white;
-        box-shadow: 3px 3px 6px rgb(114 151 209 / 90%);
-        transition: 200ms;
-    }
-    .suggest-action-item > h3 {
-        color: lightyellow;
-        text-align: center;
-    }
-
-    .suggest-action-item-inner {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
-        overflow: hidden;
-    }
-
-    .suggest-action-item-inner > p {
-        display: block;
-        text-align: center;
-        flex: 1 1 50%;
-        font-size: 24px;
-        color: white;
-        font-weight: bold;
-    }
-    .suggest-action-item-inner > img {
-        flex: 1 0 auto;
-        width: 48px;
-        height: 48px;
-        max-width: 48px;
-    }
-</style>
-
 @code {
-    List<SuggestActionItem> data;
+    List<SuggestActionItem> data = new List<SuggestActionItem>();
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(System.TimeSpan.FromSeconds(2));
-        data = GetTestData();
+        LoadTestData();
     }
 
-    private List<SuggestActionItem> GetTestData()
+    private void LoadTestData()
     {
-        var list = new List<SuggestActionItem>()
-        {
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername1", IsCompleted = false },
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername2", IsCompleted = false },
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername3", IsCompleted = true },
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername4", IsCompleted = false },
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername5", IsCompleted = true },
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername6", IsCompleted = false },
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername7", IsCompleted = true },
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername8", IsCompleted = false },
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername9", IsCompleted = true },
-            new SuggestActionItem() { CategoryName = "General", InitiatorUsername = "painven", AcceptorUsername = "otherusername10", IsCompleted = false },
-        };
-        return list;
-    }
+        var random = new Random();
 
-    public class SuggestActionItem
-    {
-        public string InitiatorUsername { get; init; }
-        public string AcceptorUsername { get; init; }
-        public string CategoryName { get; init; }
-        public bool IsCompleted { get; init; }
+        var list = Enumerable.Range(0, 25)
+        .Select(i => new SuggestActionItem()
+            {
+                AcceptorUsername = "painven1",
+                InitiatorUsername = "painven2",
+                CategoryName = "General",
+                IsCompleted = random.Next(2) == 0 ? true : false,
+                Created = DateTime.Now.AddHours(-i)
+            }).ToList();
+
+        data = list;
     }
 }
