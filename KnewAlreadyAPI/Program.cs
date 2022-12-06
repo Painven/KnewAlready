@@ -5,8 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
 builder.Services.AddSingleton<ISuggestActionRepository, InMemorySuggestActionRepository>();
-builder.Services.AddSingleton<ISuggestActionApiClientRepository, InMemmorySuggestActionApiClientRepository>();
+builder.Services.AddSingleton<ISuggestActionUserRepository, InMemmorySuggestActionUserRepository>();
+builder.Services.AddSingleton<UserSuggestProcessor>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

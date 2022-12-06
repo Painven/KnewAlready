@@ -5,22 +5,44 @@ namespace KnewAlreadyAPI;
 public interface ISuggestActionRepository
 {
     Task<SuggestActionItemDto[]> GetAll();
-    Task Create(SuggestActionRequestDto requestData);
+    Task<SuggestActionItemDto?> CreateOrSuggest(SuggestActionItemDto item);
 }
 
 public class InMemorySuggestActionRepository : ISuggestActionRepository
 {
-    List<SuggestActionItemDto> testData = new();
+    private readonly List<SuggestActionItemDto> testData = new();
 
-    public Task Create(SuggestActionRequestDto requestData)
+    public async Task<SuggestActionItemDto[]> GetAll()
     {
-        //testData.Add(requestData);
+        await Task.Delay(TimeSpan.FromMilliseconds(300));
 
-        return Task.CompletedTask;
+        return testData.ToArray();
     }
 
-    public Task<SuggestActionItemDto[]> GetAll()
+    public async Task<SuggestActionItemDto?> CreateOrSuggest(SuggestActionItemDto item)
     {
-        return Task.FromResult(testData.ToArray());
+        await Task.Delay(TimeSpan.FromMilliseconds(300));
+
+        var alreadyCreatedSuggest = testData.FirstOrDefault(i => i.Id == item.Id && !i.IsConfirmed);
+        
+        if(alreadyCreatedSuggest != null)
+        {
+            var updated = alreadyCreatedSuggest with
+            {
+                Created = DateTime.Now,
+                IsConfirmed = true
+            };
+
+            testData.Remove(alreadyCreatedSuggest);
+            testData.Add(updated);
+
+            return updated;
+        }
+        else
+        {
+            testData.Add(item);
+            return item;
+        }       
     }
+
 }

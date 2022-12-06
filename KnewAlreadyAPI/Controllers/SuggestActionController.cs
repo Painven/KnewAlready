@@ -9,35 +9,38 @@ namespace KnewAlreadyAPI.Controllers;
 [Route("api/suggest-actions")]
 public class SuggestActionController : ControllerBase
 {
-    private readonly ISuggestActionRepository repository;
+    private readonly UserSuggestProcessor processor;
+    private readonly ISuggestActionRepository suggestRepository;
     private readonly ILogger<SuggestActionController> logger;
 
-    public SuggestActionController(ISuggestActionRepository repository, ILogger<SuggestActionController> logger)
+    public SuggestActionController(UserSuggestProcessor processor, 
+        ISuggestActionRepository suggestRepository, 
+        ILogger<SuggestActionController> logger)
     {
-        this.repository = repository;
+        this.processor = processor;
+        this.suggestRepository = suggestRepository;
         this.logger = logger;
     }
 
+    [HttpGet]
     public async Task<IEnumerable<SuggestActionItemDto>> GetAll()
     {
-        logger.LogInformation("GET: GetAll");
-
-        var data = await repository.GetAll();
-
+        var data = await suggestRepository.GetAll();
         return data;
     }
 
     [HttpPost]
-    public async Task<SuggestActionResponseDto> Send([FromBody]SuggestActionRequestDto requestData)
+    public async Task<SuggestActionResponseDto> Send([FromBody]SuggestActionRequestDto data)
     {
-        logger.LogInformation("POST: Send");
+        var item = await processor.ProcessRequest(data);
 
-        var isAlreadyCreated = (await repository.GetAll());
-
-        await repository.Create(requestData);
-
-        throw new NotImplementedException();
+        if (item.IsConfirmed)
+        {
+            return new SuggestActionResponseDto() { Id = item.Id, Status = "Accepted" };
+        }
+        else
+        {
+            return new SuggestActionResponseDto() { Id = item.Id, Status = "Created" };
+        }
     }
-
-
 }

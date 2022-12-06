@@ -3,10 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:KnewAlreadyDesktopClient.ViewModels"     
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"    
+        xmlns:converters="clr-namespace:KnewAlreadyDesktopClient.Infrastructure.Converters"     
         SizeToContent="WidthAndHeight" 
         mc:Ignorable="d"
         Title="KA Desktop" Height="237" Width="393">
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Window.Resources>
+    
     <Grid Margin="20">
         <StackPanel>
             
@@ -17,38 +22,34 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="FROM API_KEY" HorizontalAlignment="Center" />
-                    <ComboBox SelectedValue="{Binding SelectedProfileApiKey}" Margin="2">
-                        <ComboBoxItem>18EE7916-7DF1-4189-AD5C-3F9E19A09DFC</ComboBoxItem>
-                        <ComboBoxItem>1B2F3006-61A4-4293-A835-7AD4616B1F29</ComboBoxItem>
+                    <ComboBox SelectedValue="{Binding SelectedProfileApiKey}" Margin="2" SelectedIndex="0">
+                        <system:String>18EE7916-7DF1-4189-AD5C-3F9E19A09DFC</system:String>
+                        <system:String>1B2F3006-61A4-4293-A835-7AD4616B1F29</system:String>
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Grid.Column="1">
                     <TextBlock Text="TO USERNAME" HorizontalAlignment="Center" />
-                    <ComboBox SelectedValue="{Binding SelectedTargetUsername}" Margin="2">
-                        <ComboBoxItem>painven1</ComboBoxItem>
-                        <ComboBoxItem>painven2</ComboBoxItem>
+                    <ComboBox SelectedValue="{Binding SelectedTargetUsername}" Margin="2" SelectedIndex="1">
+                        <system:String>painven1</system:String>
+                        <system:String>painven2</system:String>
                     </ComboBox>
                 </StackPanel>
 
             </Grid>
             <TextBlock Text="Категория" />
-            <ComboBox SelectedValue="{Binding SelectedCategory}">
-                <ComboBoxItem>Test category1</ComboBoxItem>
-                <ComboBoxItem>Test category2</ComboBoxItem>
-                <ComboBoxItem>Test category3</ComboBoxItem>
+            <ComboBox SelectedValue="{Binding SelectedCategory}" SelectedIndex="0">
+                <system:String>category1</system:String>
+                <system:String>category2</system:String>
+                <system:String>category3</system:String>
             </ComboBox>
             <TextBlock Text="Длительность ожидания" />
-            <ComboBox SelectedValue="{Binding SelectedTimeRange}">
+            <ComboBox SelectedValue="{Binding SelectedTimeRange}" SelectedIndex="0" IsReadOnly="True">
                 <ComboBoxItem>5 м.</ComboBoxItem>
-                <ComboBoxItem>15 м.</ComboBoxItem>
-                <ComboBoxItem>45 м.</ComboBoxItem>
-                <ComboBoxItem>1 ч.</ComboBoxItem>
-                <ComboBoxItem>6 ч.</ComboBoxItem>
-                <ComboBoxItem>12ч.</ComboBoxItem>
-                <ComboBoxItem>24 ч.</ComboBoxItem>
             </ComboBox>
             <Button Command="{Binding SendCommand}" Content="SEND" Margin="0 20 0 0"/>
-        
+
+            <TextBlock FontSize="14" Foreground="Red" Text="Отправка ..." Visibility="{Binding IsSendInProgress, Converter={StaticResource BoolToVisibilityConverter}}" />
+
         </StackPanel>
     </Grid>
 </Window>

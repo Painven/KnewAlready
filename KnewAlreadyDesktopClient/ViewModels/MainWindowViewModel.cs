@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -34,17 +35,16 @@ public class MainWindowViewModel : ViewModelBase
         set => Set(ref selectedCategory, value);
     }
 
-    string selectedTimeRange;
- 
-    public string SelectedTimeRange
+    bool isSendInProgress;
+    public bool IsSendInProgress
     {
-        get => selectedTimeRange;
-        set => Set(ref selectedTimeRange, value);
+        get => isSendInProgress;
+        set => Set(ref isSendInProgress, value);
     }
 
     public MainWindowViewModel()
     {
-        SendCommand = new LambdaCommand(Send, CanSend);
+        SendCommand = new LambdaCommand(async e => await Send(), CanSend);
     }
 
     public MainWindowViewModel(KnewAlreadyApiHttpClient apiClient) : this()
@@ -52,25 +52,46 @@ public class MainWindowViewModel : ViewModelBase
         this.apiClient = apiClient;
     }
 
-    private void Send(object obj)
+    private async Task Send()
     {
-        string msg = new StringBuilder()
-            .AppendLine($"Отправка {SelectedProfileApiKey} -> {SelectedTargetUsername}")
-            .AppendLine($"Категория: {SelectedCategory}")
-            .Append($"Лимит по времени: {SelectedTimeRange}")
-            .ToString();
+        IsSendInProgress = true;
 
-        MessageBox.Show(msg);
+        try
+        {
+            var response = await apiClient.SuggestActionsAsync(new SuggestActionRequestDto()
+            {
+                CategoryName = SelectedCategory,
+                TargetUsername = SelectedTargetUsername,
+                TimeLimit = new KnewAlreadyCore.TimeSpan()
+                {
+                    TotalMinutes = 5
+                }
+            });
+
+            string responseMsg = $"Запрос выполнен: ID={response.Id}\r\nСообщение: {response.Status}";
+            MessageBox.Show(responseMsg, "Выполнено", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch(Exception ex)
+        {
+            MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsSendInProgress = false;
+            SelectedCategory = String.Empty;
+            SelectedProfileApiKey = String.Empty;
+            SelectedTargetUsername = String.Empty;
+        }
+
     }
 
     private bool CanSend(object arg)
     {
-        return new[] {
+        return !IsSendInProgress && (new[] {
             SelectedProfileApiKey, 
             SelectedCategory, 
-            SelectedTimeRange,
             SelectedTargetUsername
         }
-        .All(str => !string.IsNullOrWhiteSpace(str));
+        .All(str => !string.IsNullOrWhiteSpace(str)));
     }
 }

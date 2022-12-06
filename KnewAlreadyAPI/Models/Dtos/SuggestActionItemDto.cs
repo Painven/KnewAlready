@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace KnewAlreadyAPI.Dtos;
 
-public class SuggestActionItemDto
+public record SuggestActionItemDto
 {
     public Guid Id { get; init; }
     public Guid InitiatorUserId { get; init; }
     public Guid AcceptorUserId { get; init; }
     public DateTime Created { get; init; }
-    public TimeSpan LifeTime { get; init; }
+    public int LifeTimeInMinutes { get; init; }
     public DateTime? ConfirmDateTime { get; init; }
     public string CategoryName { get; init; }
     public bool IsConfirmed { get; init; }
