@@ -23,13 +23,14 @@ public class InMemorySuggestActionRepository : ISuggestActionRepository
     {
         await Task.Delay(TimeSpan.FromMilliseconds(300));
 
-        var alreadyCreatedSuggest = testData.FirstOrDefault(i => i.Id == item.Id && !i.IsConfirmed);
+        var alreadyCreatedSuggest = testData
+            .FirstOrDefault(i => i.Id == item.Id && !i.IsConfirmed);
         
         if(alreadyCreatedSuggest != null)
         {
             var updated = alreadyCreatedSuggest with
             {
-                Created = DateTime.Now,
+                ConfirmDateTime = DateTime.Now,
                 IsConfirmed = true
             };
 

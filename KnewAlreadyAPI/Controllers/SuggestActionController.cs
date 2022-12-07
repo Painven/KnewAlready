@@ -34,13 +34,19 @@ public class SuggestActionController : ControllerBase
     {
         var item = await processor.ProcessRequest(data);
 
-        if (item.IsConfirmed)
+        if(item == null)
+        {
+            return new SuggestActionResponseDto() { Id = Guid.Empty, Status = "AlreadyHasActiveItemInThatTimeRange" };
+        }
+        else if (item.IsConfirmed)
         {
             return new SuggestActionResponseDto() { Id = item.Id, Status = "Accepted" };
         }
-        else
+        else if(!item.IsConfirmed)
         {
             return new SuggestActionResponseDto() { Id = item.Id, Status = "Created" };
         }
+
+        throw new ArgumentOutOfRangeException(nameof(data));
     }
 }

@@ -4,52 +4,83 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"    
+        xmlns:vm="clr-namespace:KnewAlreadyDesktopClient.ViewModels"    
         xmlns:converters="clr-namespace:KnewAlreadyDesktopClient.Infrastructure.Converters"     
-        SizeToContent="WidthAndHeight" 
         mc:Ignorable="d"
-        Title="KA Desktop" Height="237" Width="393">
+        Foreground="White"
+        d:DataContext="{d:DesignData Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
+        Title="{Binding Title}" Height="300" Width="550">
+    <Window.Background>
+        <ImageBrush ImageSource="/Assets/clouds-2.jpg" />
+    </Window.Background>
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
-    
-    <Grid Margin="20">
-        <StackPanel>
-            
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="FROM API_KEY" HorizontalAlignment="Center" />
-                    <ComboBox SelectedValue="{Binding SelectedProfileApiKey}" Margin="2" SelectedIndex="0">
-                        <system:String>18EE7916-7DF1-4189-AD5C-3F9E19A09DFC</system:String>
-                        <system:String>1B2F3006-61A4-4293-A835-7AD4616B1F29</system:String>
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <TextBlock Text="TO USERNAME" HorizontalAlignment="Center" />
-                    <ComboBox SelectedValue="{Binding SelectedTargetUsername}" Margin="2" SelectedIndex="1">
-                        <system:String>painven1</system:String>
-                        <system:String>painven2</system:String>
-                    </ComboBox>
-                </StackPanel>
 
-            </Grid>
-            <TextBlock Text="Категория" />
-            <ComboBox SelectedValue="{Binding SelectedCategory}" SelectedIndex="0">
-                <system:String>category1</system:String>
-                <system:String>category2</system:String>
-                <system:String>category3</system:String>
-            </ComboBox>
-            <TextBlock Text="Длительность ожидания" />
-            <ComboBox SelectedValue="{Binding SelectedTimeRange}" SelectedIndex="0" IsReadOnly="True">
-                <ComboBoxItem>5 м.</ComboBoxItem>
-            </ComboBox>
-            <Button Command="{Binding SendCommand}" Content="SEND" Margin="0 20 0 0"/>
+    <Grid>
+        <Grid.Background>
+            <SolidColorBrush Color="Black" Opacity="0.7" />
+        </Grid.Background>
 
-            <TextBlock FontSize="14" Foreground="Red" Text="Отправка ..." Visibility="{Binding IsSendInProgress, Converter={StaticResource BoolToVisibilityConverter}}" />
+        <Grid Margin="20 40">
+            <StackPanel>
 
-        </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Sender user" HorizontalAlignment="Center" />
+                        <ComboBox SelectedValue="{Binding SelectedSenderUser}"
+                              Height="28"
+                              ItemsSource="{Binding Users}"
+                              Margin="2" SelectedIndex="0">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding ApiKey}" />
+                                        <TextBlock Text="{Binding Username}" FontSize="11" Foreground="DarkGray" Margin="8 2 2 2" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="DestinationUser" HorizontalAlignment="Center" />
+                        <ComboBox SelectedValue="{Binding SelectedDestinationUser}" 
+                              Height="28"
+                              ItemsSource="{Binding Users}"
+                              DisplayMemberPath="Username"
+                              Margin="2" SelectedIndex="1">
+
+                        </ComboBox>
+                    </StackPanel>
+
+                </Grid>
+                <TextBlock Text="Категория" />
+                <ComboBox SelectedValue="{Binding SelectedCategory}" SelectedIndex="0">
+                    <system:String>category1</system:String>
+                    <system:String>category2</system:String>
+                    <system:String>category3</system:String>
+                </ComboBox>
+                <TextBlock Text="Длительность ожидания" />
+                <ComboBox SelectedValue="{Binding SelectedTimeRange}" SelectedIndex="0" IsReadOnly="True">
+                    <ComboBoxItem>5 м.</ComboBoxItem>
+                </ComboBox>
+
+                <Grid Height="30" Margin="0 20 0 10">
+                    <Button 
+                        Command="{Binding SendCommand}" Content="SEND"/>
+                    <ProgressBar Panel.ZIndex="99"                                  
+                             Background="Blue"
+                             IsIndeterminate="True"
+                             Opacity="0.75"
+                             Visibility="{Binding IsSendInProgress, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}" />
+                </Grid>
+
+            </StackPanel>
+        </Grid>
     </Grid>
+    
 </Window>

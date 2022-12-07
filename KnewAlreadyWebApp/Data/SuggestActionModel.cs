@@ -1,7 +1,8 @@
 ﻿namespace KnewAlreadyWebApp.Data;
 
-public class SuggestActionItem
+public class SuggestActionModel
 {
+    public Guid Guid { get; init; }
     public string InitiatorUsername { get; init; }
     public string AcceptorUsername { get; init; }
     public string CategoryName { get; init; }

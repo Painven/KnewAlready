@@ -99,20 +99,29 @@
             "type": "string",
             "format": "uuid"
           },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
           "initiatorUserId": {
             "type": "string",
             "format": "uuid"
+          },
+          "initiatorUsername": {
+            "type": "string",
+            "nullable": true
           },
           "acceptorUserId": {
             "type": "string",
             "format": "uuid"
           },
-          "created": {
+          "acceptorUsername": {
             "type": "string",
-            "format": "date-time"
+            "nullable": true
           },
-          "lifeTime": {
-            "$ref": "#/components/schemas/TimeSpan"
+          "lifeTimeInMinutes": {
+            "type": "integer",
+            "format": "int32"
           },
           "confirmDateTime": {
             "type": "string",
@@ -144,8 +153,9 @@
             "type": "string",
             "nullable": true
           },
-          "timeLimit": {
-            "$ref": "#/components/schemas/TimeSpan"
+          "lifeTimeInMinutes": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -160,61 +170,6 @@
           "status": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TimeSpan": {
-        "type": "object",
-        "properties": {
-          "ticks": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "days": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hours": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "milliseconds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minutes": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "seconds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalDays": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalHours": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMilliseconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMinutes": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalSeconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
           }
         },
         "additionalProperties": false

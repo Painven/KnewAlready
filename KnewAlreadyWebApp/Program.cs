@@ -13,7 +13,7 @@ builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
     httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
 });
 
-builder.Services.AddSingleton<KnewAlreadyApiHttpClient>(x => new KnewAlreadyApiHttpClient("https://localhost:7052/", new HttpClient()));
+builder.Services.AddSingleton<SuggetWebApiSwaggerClient>(x => new SuggetWebApiSwaggerClient("https://localhost:7052/", new HttpClient()));
 
 var app = builder.Build();
 

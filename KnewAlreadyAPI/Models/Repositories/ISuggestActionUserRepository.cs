@@ -6,6 +6,7 @@ public interface ISuggestActionUserRepository
 {
     Task<SuggestActionUserDto[]> GetAll();
     Task<Guid> GetUserIdByName(string username);
+    Task<string> GetUsernameByGuid(Guid guid);
 }
 
 public class InMemmorySuggestActionUserRepository : ISuggestActionUserRepository
@@ -26,18 +27,29 @@ public class InMemmorySuggestActionUserRepository : ISuggestActionUserRepository
 
     public async Task<SuggestActionUserDto[]> GetAll()
     {
-        await Task.Delay(TimeSpan.FromMilliseconds(300));
+        await Task.Delay(TimeSpan.FromMilliseconds(50));
 
         return testData.ToArray();
+    }
+    public async Task<string> GetUsernameByGuid(Guid guid)
+    {
+        await Task.Delay(TimeSpan.FromMilliseconds(50));
+
+        return testData
+            .Where(u => u.Id.Equals(guid))
+            .SingleOrDefault()
+            .Login;
     }
 
     public async Task<Guid> GetUserIdByName(string username)
     {
-        await Task.Delay(TimeSpan.FromMilliseconds(300)); 
+        await Task.Delay(TimeSpan.FromMilliseconds(50));
 
         return testData
             .Where(u => u.Login.Equals(username))
             .SingleOrDefault()
             .Id;
     }
+
+
 }

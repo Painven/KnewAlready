@@ -1,5 +1,6 @@
 ﻿using KnewAlreadyCore;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,22 +11,35 @@ namespace KnewAlreadyDesktopClient.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private readonly KnewAlreadyApiHttpClient apiClient;
+    private readonly SuggetWebApiSwaggerClient apiClient;
+
+    public ObservableCollection<UserModel> Users { get; } = new ObservableCollection<UserModel>()
+    {
+        new UserModel() { ApiKey = "18EE7916-7DF1-4189-AD5C-3F9E19A09DFC", Username = "painven1" },
+        new UserModel() { ApiKey = "1B2F3006-61A4-4293-A835-7AD4616B1F29", Username = "painven2" },
+    };
 
     public ICommand SendCommand { get; }
-    
-    string selectedTargetUsername;
-    public string SelectedTargetUsername
+
+    string title = "Suggest API v 0.1";
+    public string Title
     {
-        get => selectedTargetUsername;
-        set => Set(ref selectedTargetUsername, value);
+        get => title;
+        set => Set(ref title, value);
     }
 
-    string selectedProfileApiKey;
-    public string SelectedProfileApiKey
+    UserModel selectedDestinationUser;
+    public UserModel SelectedDestinationUser
     {
-        get => selectedProfileApiKey;
-        set => Set(ref selectedProfileApiKey, value);
+        get => selectedDestinationUser;
+        set => Set(ref selectedDestinationUser, value);
+    }
+
+    UserModel selectedSenderUser;
+    public UserModel SelectedSenderUser
+    {
+        get => selectedSenderUser;
+        set => Set(ref selectedSenderUser, value);
     }
 
     string selectedCategory;
@@ -47,7 +61,7 @@ public class MainWindowViewModel : ViewModelBase
         SendCommand = new LambdaCommand(async e => await Send(), CanSend);
     }
 
-    public MainWindowViewModel(KnewAlreadyApiHttpClient apiClient) : this()
+    public MainWindowViewModel(SuggetWebApiSwaggerClient apiClient) : this()
     {      
         this.apiClient = apiClient;
     }
@@ -61,37 +75,34 @@ public class MainWindowViewModel : ViewModelBase
             var response = await apiClient.SuggestActionsAsync(new SuggestActionRequestDto()
             {
                 CategoryName = SelectedCategory,
-                TargetUsername = SelectedTargetUsername,
-                TimeLimit = new KnewAlreadyCore.TimeSpan()
-                {
-                    TotalMinutes = 5
-                }
+                TargetUsername = SelectedDestinationUser.Username,         
+                UserId = Guid.Parse(SelectedSenderUser.ApiKey)
             });
 
-            string responseMsg = $"Запрос выполнен: ID={response.Id}\r\nСообщение: {response.Status}";
-            MessageBox.Show(responseMsg, "Выполнено", MessageBoxButton.OK, MessageBoxImage.Information);
+            IsSendInProgress = false;
+            string responseMsg = $"Suggest API v 0.1 | Запрос выполнен: ID={response.Id}\r\nСообщение: {response.Status}";
+            Title = responseMsg;
         }
         catch(Exception ex)
         {
-            MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        finally
-        {
             IsSendInProgress = false;
-            SelectedCategory = String.Empty;
-            SelectedProfileApiKey = String.Empty;
-            SelectedTargetUsername = String.Empty;
+            MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
     }
 
     private bool CanSend(object arg)
     {
-        return !IsSendInProgress && (new[] {
-            SelectedProfileApiKey, 
-            SelectedCategory, 
-            SelectedTargetUsername
-        }
-        .All(str => !string.IsNullOrWhiteSpace(str)));
+        return !IsSendInProgress &&
+            SelectedCategory != null &&
+            SelectedDestinationUser != null &&
+            SelectedSenderUser != null && 
+            SelectedSenderUser != SelectedDestinationUser;
     }
+}
+
+public class UserModel
+{
+    public string ApiKey { get; init; }
+    public string Username { get; init; }
 }
