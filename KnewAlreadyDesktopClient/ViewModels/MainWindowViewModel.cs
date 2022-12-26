@@ -62,7 +62,7 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     public MainWindowViewModel(SuggetWebApiSwaggerClient apiClient) : this()
-    {      
+    {
         this.apiClient = apiClient;
     }
 
@@ -75,15 +75,16 @@ public class MainWindowViewModel : ViewModelBase
             var response = await apiClient.SuggestActionsAsync(new SuggestActionRequestDto()
             {
                 CategoryName = SelectedCategory,
-                TargetUsername = SelectedDestinationUser.Username,         
-                UserId = Guid.Parse(SelectedSenderUser.ApiKey)
+                TargetUsername = SelectedDestinationUser.Username,
+                UserId = Guid.Parse(SelectedSenderUser.ApiKey),
+                LifeTimeInMinutes = (int)TimeSpan.FromMinutes(5).TotalMinutes
             });
 
             IsSendInProgress = false;
             string responseMsg = $"Suggest API v 0.1 | Запрос выполнен: ID={response.Id}\r\nСообщение: {response.Status}";
             Title = responseMsg;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             IsSendInProgress = false;
             MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -96,13 +97,7 @@ public class MainWindowViewModel : ViewModelBase
         return !IsSendInProgress &&
             SelectedCategory != null &&
             SelectedDestinationUser != null &&
-            SelectedSenderUser != null && 
+            SelectedSenderUser != null &&
             SelectedSenderUser != SelectedDestinationUser;
     }
-}
-
-public class UserModel
-{
-    public string ApiKey { get; init; }
-    public string Username { get; init; }
 }

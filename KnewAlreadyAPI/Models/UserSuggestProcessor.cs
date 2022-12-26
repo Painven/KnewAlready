@@ -15,17 +15,22 @@ public class UserSuggestProcessor
 
     public async Task<SuggestActionItemDto> ProcessRequest(SuggestActionRequestDto request)
     {
+
         IEnumerable<SuggestActionItemDto> data = await suggestRepository.GetAll();
         string senderUsername = await userRepository.GetUsernameByGuid(request.UserId);
         Guid targetGuid = await userRepository.GetUserIdByName(request.TargetUsername);
         DateTime now = DateTime.Now;
+        if (request.LifeTimeInMinutes == default)
+        {
+            throw new ArgumentOutOfRangeException(nameof(request.LifeTimeInMinutes));
+        }
+
 
         IEnumerable<SuggestActionItemDto> validItems = data
-            .Where(i =>
-                i.AcceptorUserId == request.UserId &&
-                i.InitiatorUserId == targetGuid &&
+            .Where(i => !i.IsConfirmed &&
                 i.CategoryName == request.CategoryName &&
-                !i.IsConfirmed)
+                (i.AcceptorUserId == request.UserId || i.InitiatorUserId == request.UserId) &&
+                (i.InitiatorUserId == targetGuid || i.AcceptorUserId == targetGuid))
             .OrderByDescending(i => i.Created)
             .AsEnumerable();
 
@@ -33,37 +38,33 @@ public class UserSuggestProcessor
             .Where(i => i.Created.AddMinutes(i.LifeTimeInMinutes) > now)
             .FirstOrDefault();
 
-        SuggestActionItemDto? waitingToSuggestItem = validItems
-            .Where(i => i.Created.AddMinutes(i.LifeTimeInMinutes) <= now)
-            .FirstOrDefault();
-
-        if (activeItem != null)
+        if (activeItem != null && activeItem.InitiatorUserId == targetGuid)
         {
-            return null;
+            var createdItem = await suggestRepository.CreateOrSuggest(activeItem);
+            return createdItem;
         }
-        else
+        else if (activeItem == null)
         {
-            if (waitingToSuggestItem == null)
+            var waitingToSuggestItem = new SuggestActionItemDto()
             {
-                waitingToSuggestItem = new SuggestActionItemDto()
-                {
-                    InitiatorUserId = request.UserId,
-                    InitiatorUsername = senderUsername,
-                    AcceptorUserId = targetGuid,
-                    AcceptorUsername = request.TargetUsername,
+                InitiatorUserId = request.UserId,
+                InitiatorUsername = senderUsername,
+                AcceptorUserId = targetGuid,
+                AcceptorUsername = request.TargetUsername,
 
-                    CategoryName = request.CategoryName,
-                    LifeTimeInMinutes = request.LifeTimeInMinutes,
-                    IsConfirmed = false,
-                    ConfirmDateTime = null,
-                    Created = DateTime.Now,
-                    Id = Guid.NewGuid(),
-                };
-            }
+                CategoryName = request.CategoryName,
+                LifeTimeInMinutes = request.LifeTimeInMinutes,
+                IsConfirmed = false,
+                ConfirmDateTime = null,
+                Id = Guid.NewGuid(),
+            };
 
             var createdItem = await suggestRepository.CreateOrSuggest(waitingToSuggestItem);
             return createdItem;
         }
+
+        return null;
+
     }
 
 }

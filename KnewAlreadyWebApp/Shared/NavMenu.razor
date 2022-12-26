@@ -14,16 +14,28 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Главная
             </NavLink>
         </div>
+        <div>
+            <div class="nav-item px-3">
+                <span>Пользователи</span>
+            </div>
+        </div>
     </nav>
 </div>
 
 @code {
     private bool collapseNavMenu = true;
 
+    [Inject] public SuggetWebApiSwaggerClient ApiClient { get; set; }
+
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
     }
 }

@@ -1,4 +1,6 @@
-﻿using KnewAlreadyAPI.Dtos;
+﻿using KnewAlreadyAPI.DataAccess;
+using KnewAlreadyAPI.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace KnewAlreadyAPI;
 
@@ -7,6 +9,31 @@ public interface ISuggestActionUserRepository
     Task<SuggestActionUserDto[]> GetAll();
     Task<Guid> GetUserIdByName(string username);
     Task<string> GetUsernameByGuid(Guid guid);
+}
+
+public class SuggestActionUserRepository : ISuggestActionUserRepository
+{
+    private readonly IDbContextFactory<KnewAlreadyDbContext> dbFactory;
+
+    public SuggestActionUserRepository(IDbContextFactory<KnewAlreadyDbContext> dbFactory)
+    {
+        this.dbFactory = dbFactory;
+    }
+
+    public Task<SuggestActionUserDto[]> GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Guid> GetUserIdByName(string username)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<string> GetUsernameByGuid(Guid guid)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class InMemmorySuggestActionUserRepository : ISuggestActionUserRepository
@@ -31,6 +58,7 @@ public class InMemmorySuggestActionUserRepository : ISuggestActionUserRepository
 
         return testData.ToArray();
     }
+
     public async Task<string> GetUsernameByGuid(Guid guid)
     {
         await Task.Delay(TimeSpan.FromMilliseconds(50));
@@ -50,6 +78,4 @@ public class InMemmorySuggestActionUserRepository : ISuggestActionUserRepository
             .SingleOrDefault()
             .Id;
     }
-
-
 }
