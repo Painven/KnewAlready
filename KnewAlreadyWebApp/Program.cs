@@ -9,11 +9,11 @@ builder.Services.AddServerSideBlazor();
 
 builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
 {
-    httpClient.BaseAddress = new Uri("https://localhost:7053/");
+    httpClient.BaseAddress = new Uri("http://knewalready-api/");
     httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
 });
 
-builder.Services.AddSingleton<SuggetWebApiSwaggerClient>(x => new SuggetWebApiSwaggerClient("https://localhost:7052/", new HttpClient()));
+builder.Services.AddSingleton<SuggetWebApiSwaggerClient>(x => new SuggetWebApiSwaggerClient("http://knewalready-api/", new HttpClient()));
 
 var app = builder.Build();
 

@@ -1,4 +1,6 @@
-﻿using KnewAlreadyAPI.DataAccess;
+﻿using AutoMapper;
+using KnewAlreadyAPI.DataAccess;
+using KnewAlreadyAPI.DataAccess.Entities;
 using KnewAlreadyAPI.Dtos;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,15 +15,17 @@ public interface ISuggestActionRepository
 public class SuggestActionRepository : ISuggestActionRepository
 {
     private readonly IDbContextFactory<KnewAlreadyDbContext> dbFactory;
+    private readonly IMapper mapper;
 
-    public SuggestActionRepository(IDbContextFactory<KnewAlreadyDbContext> dbFactory)
+    public SuggestActionRepository(IDbContextFactory<KnewAlreadyDbContext> dbFactory, IMapper mapper)
     {
         this.dbFactory = dbFactory;
+        this.mapper = mapper;
     }
 
     public async Task<SuggestActionItemDto?> CreateOrSuggest(SuggestActionItemDto item)
     {
-        /*using var db = await dbFactory.CreateDbContextAsync();
+        using var db = await dbFactory.CreateDbContextAsync();
 
         var alreadyCreatedSuggest = db.SuggestActionItems
             .FirstOrDefault(i => i.Id == item.Id && !i.IsConfirmed);
@@ -29,24 +33,30 @@ public class SuggestActionRepository : ISuggestActionRepository
         if (alreadyCreatedSuggest != null)
         {
             alreadyCreatedSuggest.ConfirmDateTime = DateTime.UtcNow;
-            IsConfirmed.ConfirmDateTime = true;
+            alreadyCreatedSuggest.IsConfirmed = true;
 
-            testData.Remove(alreadyCreatedSuggest);
-            testData.Add(updated);
+            await db.SaveChangesAsync();
 
-            return updated;
+            return mapper.Map<SuggestActionItemDto>(alreadyCreatedSuggest);
         }
         else
         {
-            testData.Add(item);
-            return item;
-        }*/
-        throw new NotImplementedException();
+            var newItem = mapper.Map<SuggestActionItem>(item);
+            db.SuggestActionItems.Add(newItem);
+
+            await db.SaveChangesAsync();
+
+            return mapper.Map<SuggestActionItemDto>(newItem);
+        }
     }
 
-    public Task<SuggestActionItemDto[]> GetAll()
+    public async Task<SuggestActionItemDto[]> GetAll()
     {
-        throw new NotImplementedException();
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var data = mapper.Map<IEnumerable<SuggestActionItemDto>>(db.SuggestActionItems);
+
+        return data.ToArray();
     }
 }
 

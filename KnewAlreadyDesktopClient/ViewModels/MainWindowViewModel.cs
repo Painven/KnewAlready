@@ -15,8 +15,8 @@ public class MainWindowViewModel : ViewModelBase
 
     public ObservableCollection<UserModel> Users { get; } = new ObservableCollection<UserModel>()
     {
-        new UserModel() { ApiKey = "18EE7916-7DF1-4189-AD5C-3F9E19A09DFC", Username = "painven1" },
-        new UserModel() { ApiKey = "1B2F3006-61A4-4293-A835-7AD4616B1F29", Username = "painven2" },
+        new UserModel() { ApiKey = "18ee7916-7df1-4189-ad5c-3f9e19a09dfc", Username = "painven1" },
+        new UserModel() { ApiKey = "1b2f3006-61a4-4293-a835-7ad4616b1f29", Username = "painven2" },
     };
 
     public ICommand SendCommand { get; }

@@ -1,4 +1,5 @@
-﻿using KnewAlreadyAPI.DataAccess;
+﻿using AutoMapper;
+using KnewAlreadyAPI.DataAccess;
 using KnewAlreadyAPI.Dtos;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,25 +15,47 @@ public interface ISuggestActionUserRepository
 public class SuggestActionUserRepository : ISuggestActionUserRepository
 {
     private readonly IDbContextFactory<KnewAlreadyDbContext> dbFactory;
+    private readonly IMapper mapper;
 
-    public SuggestActionUserRepository(IDbContextFactory<KnewAlreadyDbContext> dbFactory)
+    public SuggestActionUserRepository(IDbContextFactory<KnewAlreadyDbContext> dbFactory, IMapper mapper)
     {
         this.dbFactory = dbFactory;
+        this.mapper = mapper;
     }
 
-    public Task<SuggestActionUserDto[]> GetAll()
+    public async Task<SuggestActionUserDto[]> GetAll()
     {
-        throw new NotImplementedException();
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var items = mapper.Map<IEnumerable<SuggestActionUserDto>>(db.Users);
+
+        return items.ToArray();
     }
 
-    public Task<Guid> GetUserIdByName(string username)
+    public async Task<Guid> GetUserIdByName(string username)
     {
-        throw new NotImplementedException();
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var item = await db.Users.SingleOrDefaultAsync(u => u.Login == username);
+
+        if (item != null)
+        {
+            return item.Id;
+        }
+        return Guid.Empty;
     }
 
-    public Task<string> GetUsernameByGuid(Guid guid)
+    public async Task<string> GetUsernameByGuid(Guid guid)
     {
-        throw new NotImplementedException();
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var item = await db.Users.SingleOrDefaultAsync(u => u.Id == guid);
+
+        if (item != null)
+        {
+            return item.Login;
+        }
+        return String.Empty;
     }
 }
 
@@ -74,8 +97,7 @@ public class InMemmorySuggestActionUserRepository : ISuggestActionUserRepository
         await Task.Delay(TimeSpan.FromMilliseconds(50));
 
         return testData
-            .Where(u => u.Login.Equals(username))
-            .SingleOrDefault()
+            .SingleOrDefault(u => u.Login == username)
             .Id;
     }
 }

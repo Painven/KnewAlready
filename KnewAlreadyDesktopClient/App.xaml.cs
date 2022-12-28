@@ -11,7 +11,8 @@ public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
-        var vm = new MainWindowViewModel(new SuggetWebApiSwaggerClient("https://localhost:7052", new HttpClient()));
+        string apiUri = "http://90.156.211.247:5052/";
+        var vm = new MainWindowViewModel(new SuggetWebApiSwaggerClient(apiUri, new HttpClient()));
         var mainWindow = new MainWindow();
         mainWindow.DataContext = vm;
         mainWindow.Show();

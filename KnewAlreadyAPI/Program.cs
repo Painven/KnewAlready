@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddDbContextFactory<KnewAlreadyDbContext>(options =>
+    {
+        string connectionString = builder.Configuration.GetConnectionString("default");
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        options.UseNpgsql(connectionString);
 
+    });
 
-builder.Services.AddDbContext<KnewAlreadyDbContext>(options =>
-{
-    string connectionString = builder.Configuration.GetConnectionString("default");
-    options.UseNpgsql(connectionString);
-});
-
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<ISuggestActionRepository, SuggestActionRepository>();
 builder.Services.AddSingleton<ISuggestActionUserRepository, SuggestActionUserRepository>();
 builder.Services.AddSingleton<UserSuggestProcessor>();
@@ -37,3 +37,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

@@ -8,7 +8,9 @@ public class KnewAlreadyDbContext : DbContext
     public DbSet<SuggestActionItem> SuggestActionItems { get; set; }
     public DbSet<User> Users { get; set; }
 
-    protected KnewAlreadyDbContext(DbContextOptions<KnewAlreadyDbContext> options)
+    public KnewAlreadyDbContext(DbContextOptions<KnewAlreadyDbContext> options) : base(options)
     {
+        this.Database.EnsureCreated();
+
     }
 }

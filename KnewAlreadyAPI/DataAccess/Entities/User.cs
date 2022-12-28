@@ -1,7 +1,15 @@
-﻿namespace KnewAlreadyAPI.DataAccess.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace KnewAlreadyAPI.DataAccess.Entities;
+
+[Table("user")]
 public class User
 {
-    public Guid Id { get; init; }
-    public string Login { get; init; }
+    [Column("id")]
+    public Guid Id { get; set; }
+
+    [Column("login")]
+    [Required]
+    public string Login { get; set; }
 }
