@@ -51,10 +51,10 @@
     {
         @foreach (var item in userRequestItems)
         {
-            <div class="suggest-action-item@((newItems.Contains(item) ? " new-item" : ""))">
+            <div class=@getItemClasses(item)>
                 <div class="time-labels">
                     <p>Создан: <span>@item.Created.ToString("dd.MM.yyyy HH:mm")</span></p>
-                    @if (!@item.IsExpired)
+                    @if (!item.IsExpired && !item.IsCompleted)
                     {
                         <p>Осталось: <span class="blink">@item.TimeLeft.Value.ToString("hh\\:mm")</span></p>
                     }

@@ -44,7 +44,7 @@ public class SuggestActionRepository : ISuggestActionRepository
         {
             var newItem = mapper.Map<SuggestActionItem>(item);
 
-            newItem.Created = DateTime.Now;
+            newItem.Created = DateTimeOffset.Now.DateTime;
 
             db.SuggestActionItems.Add(newItem);
 

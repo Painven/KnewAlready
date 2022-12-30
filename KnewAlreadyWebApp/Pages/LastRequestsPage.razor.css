@@ -33,6 +33,14 @@
         animation-iteration-count: 1;
     }
 
+    .suggest-action-item.expired {
+        opacity: 0.3;
+    }
+
+        .suggest-action-item.expired:hover {
+            opacity: 1;
+        }
+
 .blink {
     animation: timeBlink 2s linear infinite;
 }

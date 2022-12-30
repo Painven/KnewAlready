@@ -6,8 +6,8 @@ public class SuggestActionModel
     public string InitiatorUsername { get; init; }
     public string AcceptorUsername { get; init; }
     public string CategoryName { get; init; }
-    public DateTimeOffset Created { get; init; }
-    public DateTimeOffset? ConfirmDateTime { get; init; }
+    public DateTime Created { get; init; }
+    public DateTime? ConfirmDateTime { get; init; }
     public bool IsCompleted { get; init; }
     public int LifeTimeInMinutes { get; init; }
 
@@ -15,7 +15,7 @@ public class SuggestActionModel
     {
         get
         {
-            bool result = Created.AddMinutes(LifeTimeInMinutes) < DateTimeOffset.Now;
+            bool result = DateTime.Now > Created.AddMinutes(LifeTimeInMinutes);
             return result;
         }
     }
@@ -28,7 +28,7 @@ public class SuggestActionModel
                 return null;
             }
 
-            TimeSpan timeLeft = DateTimeOffset.Now - Created.AddMinutes(LifeTimeInMinutes);
+            TimeSpan timeLeft = DateTime.Now - Created.AddMinutes(LifeTimeInMinutes);
 
             return timeLeft;
 

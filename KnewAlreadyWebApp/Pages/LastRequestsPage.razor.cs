@@ -19,6 +19,22 @@ public partial class LastRequestsPage
 
     [Parameter] public string Username { get; set; }
 
+    public string getItemClasses(SuggestActionModel item)
+    {
+        string str = "suggest-action-item";
+
+        if (newItems.Contains(item))
+        {
+            str += " new-item";
+        }
+
+        if (item.IsExpired && !item.IsCompleted)
+        {
+            str += " expired";
+        }
+
+        return str;
+    }
     public string getItemStatusIconClass(SuggestActionModel item)
     {
         if (item.IsCompleted)
@@ -35,6 +51,8 @@ public partial class LastRequestsPage
         }
 
     }
+
+
 
     protected override async Task OnInitializedAsync()
     {

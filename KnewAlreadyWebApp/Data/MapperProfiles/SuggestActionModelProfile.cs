@@ -8,6 +8,7 @@ public class SuggestActionModelProfile : Profile
     public SuggestActionModelProfile()
     {
         CreateMap<SuggestActionModel, SuggestActionItemDto>();
-        CreateMap<SuggestActionItemDto, SuggestActionModel>();
+        CreateMap<SuggestActionItemDto, SuggestActionModel>()
+            .ForMember(x => x.Created, x => x.MapFrom(p => p.Created.UtcDateTime));
     }
 }
