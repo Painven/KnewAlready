@@ -12,6 +12,7 @@ string apiHost = "http://knewalready-api/";
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
 {

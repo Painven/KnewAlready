@@ -2,7 +2,7 @@
 @page "/last-requests/user/{Username}"
 
 @implements IDisposable
-@inject SuggetWebApiSwaggerClient apiClient
+@using AutoMapper
 @using KnewAlreadyWebApp.Data
 @using System.Timers
 
@@ -11,36 +11,58 @@
 @if (Username != null)
 {
     <h2>Запросы пользователя: <strong>@Username</strong></h2>
-}
-else
-{
-    <h1>Запросы от всех пользователей</h1>
-}
 
-<div class="suggest-action-tool-panel my-2">
-    <div class="btn-group" role="group">
-        <button class="btn btn-secondary p-2">
-            Только активные
-        </button>
-        <button class="btn btn-secondary p-2">
-            Все
-        </button>
+    <div class="suggest-action-tool-panel my-2">
+        <div class="d-inline">
+            <div class="btn-group" role="group">
+                <button class="btn btn-primary p-2">
+                    Все
+                </button>
+                <button class="btn btn-outline-primary p-2 ">
+                    Только ожидающие
+                </button>
+                <button class="btn btn-outline-primary p-2 ">
+                    Только законченные
+                </button>
+            </div>
+        </div>
+
+        <div class="d-inline">
+            <strong>Категории</strong>
+            <div class="btn-group" role="group">
+                <button class="btn btn-success">
+                    Все
+                </button>
+                @foreach (var category in availableCategories)
+                {
+                    <button class="btn btn-outline-success">
+                        @category
+                    </button>
+                }
+            </div>
+        </div>
 
     </div>
-</div>
 
+}
 
 <div class="suggest-action-list">
-    @if (data is not null)
+    @if (userRequestItems is not null)
     {
-        @foreach (var item in data)
+        @foreach (var item in userRequestItems)
         {
             <div class="suggest-action-item@((newItems.Contains(item) ? " new-item" : ""))">
-                <p>Создан: <span>@item.Created.ToString("dd.MM.yyyy HH:mm")</span></p>
+                <div class="time-labels">
+                    <p>Создан: <span>@item.Created.ToString("dd.MM.yyyy HH:mm")</span></p>
+                    @if (!@item.IsExpired)
+                    {
+                        <p>Осталось: <span class="time-left">@item.TimeLeft.Value.ToString("hh\\:mm")</span></p>
+                    }
+                </div>
                 <h3>@item.CategoryName</h3>
                 <div class="suggest-action-item-inner">
                     <p>@item.InitiatorUsername</p>
-                    <span class=@("fa " + (item.IsCompleted ? "fa-hands-helping completed" : "fa-question"))></span>
+                    <span class=@("fa " + getItemStatusIconClass(item))></span>
                     <p>@item.AcceptorUsername</p>
                 </div>
             </div>
@@ -52,72 +74,3 @@ else
     }
 </div>
 
-@code {
-    List<SuggestActionModel> data = new List<SuggestActionModel>();
-    List<SuggestActionModel> newItems = new List<SuggestActionModel>();
-    System.Timers.Timer timer;
-
-    [Parameter] public string Username { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-
-
-        timer = new System.Timers.Timer((int)TimeSpan.FromSeconds(3).TotalMilliseconds);
-        timer.Elapsed += TimerTick;
-        timer.Start();
-
-        await LoadData();
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        timer.Stop();
-        data.Clear();
-        await LoadData();
-        timer.Start();
-    }
-
-    private async void TimerTick(object sender, ElapsedEventArgs e)
-    {
-        List<SuggestActionModel> tempItems = data;
-
-        await LoadData();
-
-        newItems.Clear();
-        foreach (var item in data)
-        {
-            var alreadyAddedItem = tempItems.FirstOrDefault(i => i.Guid == item.Guid);
-            if (alreadyAddedItem == null || alreadyAddedItem.IsCompleted != item.IsCompleted)
-            {
-                newItems.Add(item);
-            }
-        }
-
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task LoadData()
-    {
-        data = (await apiClient.SuggestActionsAllAsync(Username))
-            .Select(item => new SuggestActionModel()
-                {
-                    AcceptorUsername = item.AcceptorUsername,
-                    InitiatorUsername = item.InitiatorUsername,
-                    CategoryName = item.CategoryName,
-                    Created = item.Created.Date,
-                    IsCompleted = item.IsConfirmed,
-                    Guid = item.Id
-                })
-            .ToList();
-    }
-
-    public void Dispose()
-    {
-        if (timer != null)
-        {
-            timer.Elapsed -= TimerTick;
-            timer.Dispose();
-        }
-    }
-}

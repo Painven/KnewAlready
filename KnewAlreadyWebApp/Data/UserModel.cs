@@ -12,4 +12,9 @@ public class UserModel
     [Required]
     [MinLength(8, ErrorMessage = "Длина пароля должна быть как минимум 8 символов")]
     public string Password { get; set; }
+
+    [EmailAddress]
+    public string Email { get; set; }
+
+    public string Telegram { get; set; }
 }

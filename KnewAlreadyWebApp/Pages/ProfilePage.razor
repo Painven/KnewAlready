@@ -4,47 +4,63 @@
 <h1>Профиль</h1>
 
 <div class="container">
-    <div class="profile-box">
-        <div>
-            <img src="https://png.pngtree.com/png-vector/20210604/ourmid/pngtree-gray-avatar-placeholder-png-image_3416697.jpg" />
-            <label>Имя пользователя</label>
-            <input type="text" class="form-control" readonly />
+    <EditForm Model="contextUser" OnValidSubmit="SaveUserProfileChanges">
+    <DataAnnotationsValidator />
+        <div class="profile-box">
+            <div>
+                <img src="/assets/images/user.png" />
+                <label for="username">Имя пользователя</label>
+                <input type="text" class="form-control" id="username" readonly />
+            </div>
+            <div>
+                <img src="/assets/images/email.png" />
+
+                <label for="email">Email</label>
+                <input type="text" class="form-control" id="email" />
+            </div>
+            <div>
+                <img src="/assets/images/telegram.png" />
+                <label for="telegram">Telegram</label>
+                <input type="text" class="form-control" id="telegram" />
+            </div>
+            <div>
+                <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="submit">
+                    <span class="oi oi-check"></span>
+                    Сохранить
+                </button>
+            </div>
         </div>
-        <div>
-            <img src="https://png.pngtree.com/png-vector/20210604/ourmid/pngtree-gray-avatar-placeholder-png-image_3416697.jpg" />
-            <label>Email</label>
-            <input type="text" class="form-control" />
-        </div>
-        <div>
-            <img src="https://png.pngtree.com/png-vector/20210604/ourmid/pngtree-gray-avatar-placeholder-png-image_3416697.jpg" />
-            <label>Telegram</label>
-            <input type="text" class="form-control" />
-        </div>
-    </div>
-    <button class="btn btn-lg btn-success p-2 mt-3 w-100">
-        Сохранить
-    </button>
+    </EditForm>
+
+
 </div>
 
 <style>
     .profile-box {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         justify-content: center;
+        align-items: center;
         gap: 8px;
     }
 
         .profile-box > div {
-            flex: 1;
+            flex: 1 0 auto;
+            width: 300px;
         }
 
         .profile-box img {
             width: 42px;
             height: 42px;
-            margin: 42px;
+            margin: 6px;
         }
 </style>
 
 @code {
+    UserModel contextUser = new UserModel();
 
+    private async Task SaveUserProfileChanges()
+    {
+
+    }
 }

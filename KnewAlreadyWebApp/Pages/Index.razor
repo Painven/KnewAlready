@@ -11,10 +11,11 @@
     <div class="home-api-example-box">
 
         <div class="home-api-example-item-outer">
-            <h3>Вы играете в игру с возможностью пере-генерации карты (на примере игры HOTA)</h3>
+
             <div class="home-api-example-item-inner">
                 <img src="https://ic.pics.livejournal.com/kirillkrm/30093132/940757/940757_original.jpg" />
                 <div>
+                    <h3>Вы играете в игру с возможностью пере-генерации карты (на примере игры HOTA)</h3>
                     <p>В игре HOTA вы можете предложить сопернику перегенерировать карту (если у вас не осталось рестартов, обычно их 1 или 2), но соперник может отказаться, и в этом случае он узнает что у вас плохое положение.</p>
                     <p>В тоже время, если делать это в скрытом виде - через этот API, то получается что только когда вы <strong>ОБА</strong> согласитесь на перегенерацию вам обоим придет уведомление что событие <strong>произошло</strong>.</p>
                     <p>В ином случае - когда на перегенерацию согласился только один из вас, ничего не произойдет, и все просто будет идти своим чередом.</p>
@@ -24,10 +25,11 @@
         </div>
 
         <div class="home-api-example-item-outer">
-            <h3>Игра в футбол с друзьями</h3>
+
             <div class="home-api-example-item-inner">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd4OldQvXRLdXW3_h1RMjp4eFYYYJQXO6to7VIXtsm_g8kxKuneMjZPNknRq2CDuzmLC0&usqp=CAU" />
                 <div>
+                    <h3>Игра в футбол с друзьями</h3>
                     <p>Вы переодически ходите играть в футбол с другом, но не хотите напрашиватся</p>
                     <p>И вот вы можете разместить запрос и если оба согласны - вы пойдете играть оба</p>
                     <p>Если кто то не согласен он может пойти играть с другими один или не пойти вообще (если например он хотел пойти только в том случае, если вы тоже пошли бы)</p>
@@ -36,10 +38,11 @@
         </div>
 
         <div class="home-api-example-item-outer">
-            <h3>Вы решили занятся каким-то делом с своей половинкой (не важно чем)</h3>
+
             <div class="home-api-example-item-inner">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTQHjc8nGspqJxVQX70axiVUErdIGFIwK7Wg&usqp=CAU" />
                 <div>
+                    <h3>Вы решили занятся каким-то делом</h3>
                     <p>Вы не хотите просить об этом напрямую, а только в том случае когда это хотят оба человека</p>
                     <p>Пусть например вы оба увлекатесь картингом, но просить каждый раз - вам не хочется надоедать человеку. И вот тут тоже можно сделать скрытый запрос</p>
                     <p>Когда этого захотят оба человека вы оба узнаете</p>
@@ -70,10 +73,11 @@
     .home-api-example-item-inner {
         display: flex;
         flex-direction: row;
+        align-items: center;
         gap: 8px;
     }
 
-    .home-api-example-box .home-api-example-item-outer:nth-child(2n) > .home-api-example-item-inner {
+    .home-api-example-box .home-api-example-item-outer:nth-child(2n + 1) > .home-api-example-item-inner {
         flex-direction: row-reverse;
     }
 
