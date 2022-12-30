@@ -1,86 +1,104 @@
-﻿<Window x:Class="KnewAlreadyDesktopClient.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:system="clr-namespace:System;assembly=System.Runtime"    
-        xmlns:vm="clr-namespace:KnewAlreadyDesktopClient.ViewModels"    
-        xmlns:converters="clr-namespace:KnewAlreadyDesktopClient.Infrastructure.Converters"     
-        mc:Ignorable="d"
-        Foreground="White"
-        d:DataContext="{d:DesignData Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
-        Title="{Binding Title}" Height="300" Width="550">
+﻿<Window
+    x:Class="KnewAlreadyDesktopClient.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:beh="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:converters="clr-namespace:KnewAlreadyDesktopClient.Infrastructure.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:vm="clr-namespace:KnewAlreadyDesktopClient.ViewModels"
+    Title="{Binding Title}"
+    Width="550"
+    Height="300"
+    d:DataContext="{d:DesignData Type=vm:MainWindowViewModel,
+                                 IsDesignTimeCreatable=True}"
+    Foreground="White"
+    mc:Ignorable="d">
     <Window.Background>
         <ImageBrush ImageSource="/Assets/clouds-2.jpg" />
     </Window.Background>
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
-
+    <beh:Interaction.Triggers>
+        <beh:EventTrigger EventName="Loaded">
+            <beh:InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </beh:EventTrigger>
+    </beh:Interaction.Triggers>
     <Grid>
         <Grid.Background>
-            <SolidColorBrush Color="Black" Opacity="0.7" />
+            <SolidColorBrush Opacity="0.7" Color="Black" />
         </Grid.Background>
 
-        <Grid Margin="20 40">
+        <Grid Margin="20,40">
             <StackPanel>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
-                        <TextBlock Text="Sender user" HorizontalAlignment="Center" />
-                        <ComboBox SelectedValue="{Binding SelectedSenderUser}"
-                              Height="28"
-                              ItemsSource="{Binding Users}"
-                              Margin="2" SelectedIndex="0">
+                        <TextBlock HorizontalAlignment="Center" Text="Sender user" />
+                        <ComboBox
+                            Height="28"
+                            Margin="2"
+                            ItemsSource="{Binding Users}"
+                            SelectedIndex="0"
+                            SelectedValue="{Binding SelectedSenderUser}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="{Binding ApiKey}" />
-                                        <TextBlock Text="{Binding Username}" FontSize="11" Foreground="DarkGray" Margin="8 2 2 2" />
+                                        <TextBlock
+                                            Margin="8,2,2,2"
+                                            FontSize="11"
+                                            Foreground="DarkGray"
+                                            Text="{Binding Username}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Grid.Column="1">
-                        <TextBlock Text="DestinationUser" HorizontalAlignment="Center" />
-                        <ComboBox SelectedValue="{Binding SelectedDestinationUser}" 
-                              Height="28"
-                              ItemsSource="{Binding Users}"
-                              DisplayMemberPath="Username"
-                              Margin="2" SelectedIndex="1">
-
-                        </ComboBox>
+                        <TextBlock HorizontalAlignment="Center" Text="DestinationUser" />
+                        <ComboBox
+                            Height="28"
+                            Margin="2"
+                            DisplayMemberPath="Username"
+                            ItemsSource="{Binding Users}"
+                            SelectedIndex="1"
+                            SelectedValue="{Binding SelectedDestinationUser}" />
                     </StackPanel>
 
                 </Grid>
                 <TextBlock Text="Категория" />
-                <ComboBox SelectedValue="{Binding SelectedCategory}" SelectedIndex="0">
+                <ComboBox SelectedIndex="0" SelectedValue="{Binding SelectedCategory}">
                     <system:String>category1</system:String>
                     <system:String>category2</system:String>
                     <system:String>category3</system:String>
                 </ComboBox>
                 <TextBlock Text="Длительность ожидания" />
-                <ComboBox SelectedValue="{Binding SelectedTimeRange}" SelectedIndex="0" IsReadOnly="True">
+                <ComboBox
+                    IsReadOnly="True"
+                    SelectedIndex="0"
+                    SelectedValue="{Binding SelectedTimeRange}">
                     <ComboBoxItem>5 м.</ComboBoxItem>
                 </ComboBox>
 
-                <Grid Height="30" Margin="0 20 0 10">
-                    <Button 
-                        Command="{Binding SendCommand}" Content="SEND"/>
-                    <ProgressBar Panel.ZIndex="99"                                  
-                             Background="Blue"
-                             IsIndeterminate="True"
-                             Opacity="0.75"
-                             Visibility="{Binding IsSendInProgress, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}" />
+                <Grid Height="30" Margin="0,20,0,10">
+                    <Button Command="{Binding SendCommand}" Content="SEND" />
+                    <ProgressBar
+                        Panel.ZIndex="99"
+                        Background="Blue"
+                        IsIndeterminate="True"
+                        Opacity="0.75"
+                        Visibility="{Binding IsSendInProgress, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}" />
                 </Grid>
 
             </StackPanel>
         </Grid>
     </Grid>
-    
+
 </Window>

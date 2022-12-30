@@ -11,7 +11,12 @@ public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
+#if DEBUG
+        string apiUri = "http://localhost:5052/";
+#else
         string apiUri = "http://90.156.211.247:5052/";
+#endif
+
         var vm = new MainWindowViewModel(new SuggetWebApiSwaggerClient(apiUri, new HttpClient()));
         var mainWindow = new MainWindow();
         mainWindow.DataContext = vm;

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using KnewAlreadyAPI.DataAccess;
+using KnewAlreadyAPI.DataAccess.Entities;
 using KnewAlreadyAPI.Dtos;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ public interface ISuggestActionUserRepository
     Task<SuggestActionUserDto[]> GetAll();
     Task<Guid> GetUserIdByName(string username);
     Task<string> GetUsernameByGuid(Guid guid);
+    Task<bool> Create(SuggestActionUserDto user);
 }
 
 public class SuggestActionUserRepository : ISuggestActionUserRepository
@@ -21,6 +23,30 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
     {
         this.dbFactory = dbFactory;
         this.mapper = mapper;
+    }
+
+    public async Task<bool> Create(SuggestActionUserDto user)
+    {
+        if (string.IsNullOrWhiteSpace(user.Username))
+        {
+            return false;
+        }
+
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        if (db.Users.FirstOrDefault(u => u.Username == user.Username) != null)
+        {
+            return false;
+        }
+
+        var newUser = mapper.Map<User>(user);
+        newUser.Id = Guid.NewGuid();
+
+        db.Users.Add(newUser);
+
+        var result = await db.SaveChangesAsync();
+
+        return result > 0;
     }
 
     public async Task<SuggestActionUserDto[]> GetAll()

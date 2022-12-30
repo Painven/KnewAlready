@@ -13,13 +13,10 @@ public class MainWindowViewModel : ViewModelBase
 {
     private readonly SuggetWebApiSwaggerClient apiClient;
 
-    public ObservableCollection<UserModel> Users { get; } = new ObservableCollection<UserModel>()
-    {
-        new UserModel() { ApiKey = "18ee7916-7df1-4189-ad5c-3f9e19a09dfc", Username = "painven1" },
-        new UserModel() { ApiKey = "1b2f3006-61a4-4293-a835-7ad4616b1f29", Username = "painven2" },
-    };
+    public ObservableCollection<UserModel> Users { get; } = new ObservableCollection<UserModel>();
 
     public ICommand SendCommand { get; }
+    public ICommand LoadedCommand { get; }
 
     string title = "Suggest API v 0.1";
     public string Title
@@ -59,6 +56,7 @@ public class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         SendCommand = new LambdaCommand(async e => await Send(), CanSend);
+        LoadedCommand = new LambdaCommand(async e => await Loaded());
     }
 
     public MainWindowViewModel(SuggetWebApiSwaggerClient apiClient) : this()
@@ -66,6 +64,25 @@ public class MainWindowViewModel : ViewModelBase
         this.apiClient = apiClient;
     }
 
+    private async Task Loaded()
+    {
+        try
+        {
+            var data = (await apiClient.GetAllUsersAsync())
+            .Select(i => new UserModel()
+            {
+                ApiKey = i.Id.ToString(),
+                Username = i.Username
+            })
+            .ToList();
+
+            data.ForEach(u => Users.Add(u));
+        }
+        catch (Exception ex)
+        {
+            Title = "Ошибка загрузки: " + ex.Message;
+        }
+    }
     private async Task Send()
     {
         IsSendInProgress = true;

@@ -1,7 +1,9 @@
 ﻿@page "/register"
 @using KnewAlreadyWebApp.Data
+<PageTitle>Регистрация нового пользователя API</PageTitle>
 
 <h1>Регистрация нового пользователя API</h1>
+
 <div class="container">
     <EditForm Model="newUser" OnValidSubmit="RegisterNewUser" class="card card-body bg-light mt-5">
         <DataAnnotationsValidator />
@@ -9,16 +11,20 @@
         <div class="register-container">
             <div>
                 <label>Username</label>
-                <input type="text" class="form-control" />
+                <input type="text" class="form-control" @bind="newUser.Username" />
                 <ValidationMessage For="@(() => newUser.Username)" />
             </div>
             <div>
                 <label>Пароль</label>
-                <input type="text" class="form-control" />
+                <input type="password" class="form-control" @bind="newUser.Password" />
                 <ValidationMessage For="@(() => newUser.Password)" />
             </div>
             <div>
-                <button class="btn btn-success btn-lg">
+                @if (hasErrors)
+                {
+                    <h3>Ошибка создания пользователя</h3>
+                }
+                <button class="btn btn-success btn-lg w-100">
                     <span class="oi oi-check">Зарегистрироваться</span>
                 </button>
             </div>
@@ -38,15 +44,34 @@
 
         .register-container > div {
             flex: 1;
+            width: 300px;
         }
 </style>
 
 
 @code {
     UserModel newUser = new UserModel();
+    [Inject] SuggetWebApiSwaggerClient apiClient { get; set; }
+    [Inject] NavigationManager navigationManager { get; set; }
+    bool hasErrors = false;
 
     private async Task RegisterNewUser()
     {
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        var result = await apiClient.CreateUserAsync(
+            new SuggestActionUserDto()
+                {
+                    Username = newUser.Username
+                });
+
+        if (result)
+        {
+            navigationManager.NavigateTo($"/last-requests/user/{newUser.Username}");
+            hasErrors = false;
+            newUser = new UserModel();
+        }
+        else
+        {
+            hasErrors = true;
+        }
     }
 }

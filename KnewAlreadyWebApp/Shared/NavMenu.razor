@@ -21,6 +21,11 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/profile">
+                <span class="oi oi-person" aria-hidden="true"></span> Настройки
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
             <NavLink class="nav-link" href="/register">
                 <span class="oi oi-lock-locked" aria-hidden="true"></span> Регистрация
             </NavLink>
@@ -55,7 +60,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var data = (await ApiClient.UserAsync())
+        var data = (await ApiClient.GetAllUsersAsync())
             .Select(user => new UserModel()
                 {
                     Id = user.Id,

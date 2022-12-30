@@ -14,11 +14,19 @@ public class UserController : ControllerBase
         this.userRepository = userRepository;
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetAllUsers")]
     public async Task<SuggestActionUserDto[]> GetAll()
     {
         var users = await userRepository.GetAll();
 
         return users;
+    }
+
+    [HttpPost(Name = "CreateUser")]
+    public async Task<bool> CreateUser(SuggestActionUserDto user)
+    {
+        var result = await userRepository.Create(user);
+
+        return result;
     }
 }
