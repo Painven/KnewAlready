@@ -9,7 +9,7 @@ namespace KnewAlreadyAPI.Dtos;
 public record SuggestActionItemDto
 {
     public Guid Id { get; init; }
-    public DateTime Created { get; init; } = DateTime.Now;
+    public DateTime Created { get; init; }
 
     public Guid InitiatorUserId { get; init; }
     public string InitiatorUsername { get; init; }

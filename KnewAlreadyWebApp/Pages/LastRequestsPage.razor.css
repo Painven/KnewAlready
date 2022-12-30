@@ -33,33 +33,33 @@
         animation-iteration-count: 1;
     }
 
-    .suggest-action-item .time-left {
-        animation: timeBlink 2s linear infinite;
+.blink {
+    animation: timeBlink 2s linear infinite;
+}
+
+.suggest-action-item.accepted {
+}
+
+.suggest-action-item:hover {
+    border: 1px solid white;
+    box-shadow: 3px 3px 6px rgb(114 151 209 / 90%);
+    transition: 200ms;
+}
+
+.suggest-action-item p {
+    color: #dddddd;
+    font-size: 12px;
+    margin: 0px;
+}
+
+    .suggest-action-item p span {
+        color: #d2f4ff;
     }
 
-    .suggest-action-item.accepted {
-    }
-
-    .suggest-action-item:hover {
-        border: 1px solid white;
-        box-shadow: 3px 3px 6px rgb(114 151 209 / 90%);
-        transition: 200ms;
-    }
-
-    .suggest-action-item p {
-        color: #dddddd;
-        font-size: 12px;
-        margin: 0px;
-    }
-
-        .suggest-action-item p span {
-            color: #d2f4ff;
-        }
-
-    .suggest-action-item > h3 {
-        color: lightyellow;
-        text-align: center;
-    }
+.suggest-action-item > h3 {
+    color: lightyellow;
+    text-align: center;
+}
 
 .suggest-action-item-inner {
     display: flex;

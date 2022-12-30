@@ -30,18 +30,22 @@ public class SuggestActionRepository : ISuggestActionRepository
         var alreadyCreatedSuggest = db.SuggestActionItems
             .FirstOrDefault(i => i.Id == item.Id && !i.IsConfirmed);
 
+        //Обновляем | подтверждаем уже сущесутющий запрос
         if (alreadyCreatedSuggest != null)
         {
-            alreadyCreatedSuggest.ConfirmDateTime = DateTime.UtcNow;
+            alreadyCreatedSuggest.ConfirmDateTime = DateTime.Now;
             alreadyCreatedSuggest.IsConfirmed = true;
 
             await db.SaveChangesAsync();
 
             return mapper.Map<SuggestActionItemDto>(alreadyCreatedSuggest);
         }
-        else
+        else // создаем новый запрос
         {
             var newItem = mapper.Map<SuggestActionItem>(item);
+
+            newItem.Created = DateTime.Now;
+
             db.SuggestActionItems.Add(newItem);
 
             await db.SaveChangesAsync();
@@ -54,7 +58,10 @@ public class SuggestActionRepository : ISuggestActionRepository
     {
         using var db = await dbFactory.CreateDbContextAsync();
 
-        var source = db.SuggestActionItems.Where(u => forUser == null ? true : u.InitiatorUsername == forUser);
+        var source = db.SuggestActionItems
+            .Where(item => forUser == null ? true : item.InitiatorUsername == forUser)
+            .OrderByDescending(item => item.Created)
+            .ToArray();
 
         var data = mapper.Map<IEnumerable<SuggestActionItemDto>>(source);
 

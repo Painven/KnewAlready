@@ -31,7 +31,7 @@ public partial class LastRequestsPage
         }
         else
         {
-            return "fa-question";
+            return "fa-question blink";
         }
 
     }

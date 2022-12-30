@@ -15,7 +15,7 @@ public class SuggestActionModel
     {
         get
         {
-            bool result = Created.AddMinutes(LifeTimeInMinutes) < DateTimeOffset.UtcNow;
+            bool result = Created.AddMinutes(LifeTimeInMinutes) < DateTimeOffset.Now;
             return result;
         }
     }
@@ -28,7 +28,7 @@ public class SuggestActionModel
                 return null;
             }
 
-            TimeSpan timeLeft = DateTimeOffset.UtcNow - Created.AddMinutes(LifeTimeInMinutes);
+            TimeSpan timeLeft = DateTimeOffset.Now - Created.AddMinutes(LifeTimeInMinutes);
 
             return timeLeft;
 

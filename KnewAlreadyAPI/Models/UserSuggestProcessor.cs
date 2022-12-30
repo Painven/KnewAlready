@@ -20,6 +20,7 @@ public class UserSuggestProcessor
         string senderUsername = await userRepository.GetUsernameByGuid(request.UserId);
         Guid targetGuid = await userRepository.GetUserIdByName(request.TargetUsername);
         DateTime now = DateTime.Now;
+
         if (request.LifeTimeInMinutes == default)
         {
             throw new ArgumentOutOfRangeException(nameof(request.LifeTimeInMinutes));

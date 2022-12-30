@@ -9,7 +9,7 @@ public class SuggestActionItem
     public Guid Id { get; set; }
 
     [Column(name: "created")]
-    public DateTime Created { get; set; } = DateTime.Now;
+    public DateTime Created { get; set; }
 
     [Column(name: "initiator_user_id")]
     public Guid InitiatorUserId { get; set; }
