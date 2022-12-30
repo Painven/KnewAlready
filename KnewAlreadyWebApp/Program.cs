@@ -4,16 +4,22 @@ using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#if DEBUG
+string apiHost = "http://localhost:5052/";
+#else
+string apiHost = "http://knewalready-api/";
+#endif
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
 {
-    httpClient.BaseAddress = new Uri("http://knewalready-api/");
+    httpClient.BaseAddress = new Uri(apiHost);
     httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
 });
 
-builder.Services.AddSingleton<SuggetWebApiSwaggerClient>(x => new SuggetWebApiSwaggerClient("http://knewalready-api/", new HttpClient()));
+builder.Services.AddSingleton<SuggetWebApiSwaggerClient>(x => new SuggetWebApiSwaggerClient(apiHost, new HttpClient()));
 
 var app = builder.Build();
 

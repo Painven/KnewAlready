@@ -1,20 +1,27 @@
-﻿@implements IDisposable
+﻿@page "/last-requests"
+@page "/last-requests/user/{Username}"
+
+@implements IDisposable
 @inject SuggetWebApiSwaggerClient apiClient
 @using KnewAlreadyWebApp.Data
 @using System.Timers
-@using KnewAlreadyWebApp.Pages.Controls
+
+@if (Username != null)
+{
+    <h2>Запросы пользователя: <strong>@Username</strong></h2>
+}
+else
+{
+    <h1>Запросы от всех пользователей</h1>
+}
 
 <div class="suggest-action-tool-panel my-2">
     <div class="btn-group" role="group">
-        <button class="btn btn-secondary p-2" @onclick="(async e => await LoadData())">
-            <span class="oi oi-cloud"></span>
-            Загрузить данные
+        <button class="btn btn-secondary p-2">
+            Только активные
         </button>
-        <button class="btn btn-warning p-2"
-                disabled=@(data.Count == 0)
-                @onclick="(e => { data.Clear(); StateHasChanged(); } )">
-            <span class="oi oi-trash"></span>
-            Очистить
+        <button class="btn btn-secondary p-2">
+            Все
         </button>
 
     </div>
@@ -48,13 +55,25 @@
     List<SuggestActionModel> newItems = new List<SuggestActionModel>();
     System.Timers.Timer timer;
 
+    [Parameter] public string Username { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+
+
         timer = new System.Timers.Timer((int)TimeSpan.FromSeconds(3).TotalMilliseconds);
         timer.Elapsed += TimerTick;
         timer.Start();
 
         await LoadData();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        timer.Stop();
+        data.Clear();
+        await LoadData();
+        timer.Start();
     }
 
     private async void TimerTick(object sender, ElapsedEventArgs e)
@@ -78,7 +97,7 @@
 
     private async Task LoadData()
     {
-        data = (await apiClient.SuggestActionsAllAsync())
+        data = (await apiClient.SuggestActionsAllAsync(Username))
             .Select(item => new SuggestActionModel()
                 {
                     AcceptorUsername = item.AcceptorUsername,

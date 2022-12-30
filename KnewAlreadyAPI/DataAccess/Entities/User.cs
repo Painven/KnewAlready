@@ -11,5 +11,5 @@ public class User
 
     [Column("login")]
     [Required]
-    public string Login { get; set; }
+    public string Username { get; set; }
 }

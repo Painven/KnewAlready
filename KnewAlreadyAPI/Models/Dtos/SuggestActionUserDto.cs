@@ -9,5 +9,5 @@ namespace KnewAlreadyAPI.Dtos;
 public record SuggestActionUserDto
 {
     public Guid Id { get; init; }
-    public string Login { get; init; }
+    public string Username { get; init; }
 }

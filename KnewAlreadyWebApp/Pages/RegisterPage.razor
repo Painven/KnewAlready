@@ -1,0 +1,52 @@
+﻿@page "/register"
+@using KnewAlreadyWebApp.Data
+
+<h1>Регистрация нового пользователя API</h1>
+<div class="container">
+    <EditForm Model="newUser" OnValidSubmit="RegisterNewUser" class="card card-body bg-light mt-5">
+        <DataAnnotationsValidator />
+
+        <div class="register-container">
+            <div>
+                <label>Username</label>
+                <input type="text" class="form-control" />
+                <ValidationMessage For="@(() => newUser.Username)" />
+            </div>
+            <div>
+                <label>Пароль</label>
+                <input type="text" class="form-control" />
+                <ValidationMessage For="@(() => newUser.Password)" />
+            </div>
+            <div>
+                <button class="btn btn-success btn-lg">
+                    <span class="oi oi-check">Зарегистрироваться</span>
+                </button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+
+<style>
+    .register-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .register-container > div {
+            flex: 1;
+        }
+</style>
+
+
+@code {
+    UserModel newUser = new UserModel();
+
+    private async Task RegisterNewUser()
+    {
+        await Task.Delay(TimeSpan.FromSeconds(1));
+    }
+}

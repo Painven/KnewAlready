@@ -1,5 +1,19 @@
+.navbar-userlist {
+    list-style-type: none;
+}
+
+    .navbar-userlist > li {
+        font-size: 18px;
+        color: #5cb6c5;
+        margin: 6px 0px;
+    }
+
+    .navbar-userlist a {
+        text-decoration: none;
+    }
+
 .navbar-toggler {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgb(112 41 84 / 53%);
 }
 
 .top-row {
@@ -32,7 +46,7 @@
     }
 
     .nav-item ::deep a {
-        color: #d7d7d7;
+        color: white;
         border-radius: 4px;
         height: 3rem;
         display: flex;
@@ -40,15 +54,15 @@
         line-height: 3rem;
     }
 
-.nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.25);
-    color: white;
-}
+        .nav-item ::deep a.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
 
-.nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
+        .nav-item ::deep a:hover {
+            background-color: rgba(255,255,255,0.4);
+            color: white;
+        }
 
 @media (min-width: 641px) {
     .navbar-toggler {

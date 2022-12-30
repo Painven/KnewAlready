@@ -36,7 +36,7 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
     {
         using var db = await dbFactory.CreateDbContextAsync();
 
-        var item = await db.Users.SingleOrDefaultAsync(u => u.Login == username);
+        var item = await db.Users.SingleOrDefaultAsync(u => u.Username == username);
 
         if (item != null)
         {
@@ -51,53 +51,6 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
 
         var item = await db.Users.SingleOrDefaultAsync(u => u.Id == guid);
 
-        if (item != null)
-        {
-            return item.Login;
-        }
-        return String.Empty;
-    }
-}
-
-public class InMemmorySuggestActionUserRepository : ISuggestActionUserRepository
-{
-    List<SuggestActionUserDto> testData = new List<SuggestActionUserDto>()
-    {
-        new SuggestActionUserDto()
-        {
-            Id = Guid.Parse("18EE7916-7DF1-4189-AD5C-3F9E19A09DFC"),
-            Login = "painven1"
-        },
-        new SuggestActionUserDto()
-        {
-            Id = Guid.Parse("1B2F3006-61A4-4293-A835-7AD4616B1F29"),
-            Login = "painven2"
-        },
-    };
-
-    public async Task<SuggestActionUserDto[]> GetAll()
-    {
-        await Task.Delay(TimeSpan.FromMilliseconds(50));
-
-        return testData.ToArray();
-    }
-
-    public async Task<string> GetUsernameByGuid(Guid guid)
-    {
-        await Task.Delay(TimeSpan.FromMilliseconds(50));
-
-        return testData
-            .Where(u => u.Id.Equals(guid))
-            .SingleOrDefault()
-            .Login;
-    }
-
-    public async Task<Guid> GetUserIdByName(string username)
-    {
-        await Task.Delay(TimeSpan.FromMilliseconds(50));
-
-        return testData
-            .SingleOrDefault(u => u.Login == username)
-            .Id;
+        return item?.Username ?? string.Empty;
     }
 }

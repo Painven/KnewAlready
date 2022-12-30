@@ -1,7 +1,9 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 
-
+.oi::before {
+    margin-right: 8px;
+}
 
 
 @keyframes fadeIn {
@@ -16,7 +18,7 @@
 
 /* BASE */
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Consolas', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 h1:focus {

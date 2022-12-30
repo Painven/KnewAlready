@@ -12,3 +12,12 @@ public class SuggestActionProfile : Profile
         CreateMap<SuggestActionItem, SuggestActionItemDto>();
     }
 }
+
+public class UserMapperProfile : Profile
+{
+    public UserMapperProfile()
+    {
+        CreateMap<SuggestActionUserDto, User>();
+        CreateMap<User, SuggestActionUserDto>();
+    }
+}

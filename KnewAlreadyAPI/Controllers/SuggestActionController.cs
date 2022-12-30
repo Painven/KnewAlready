@@ -13,8 +13,8 @@ public class SuggestActionController : ControllerBase
     private readonly ISuggestActionRepository suggestRepository;
     private readonly ILogger<SuggestActionController> logger;
 
-    public SuggestActionController(UserSuggestProcessor processor, 
-        ISuggestActionRepository suggestRepository, 
+    public SuggestActionController(UserSuggestProcessor processor,
+        ISuggestActionRepository suggestRepository,
         ILogger<SuggestActionController> logger)
     {
         this.processor = processor;
@@ -23,18 +23,18 @@ public class SuggestActionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<SuggestActionItemDto>> GetAll()
+    public async Task<IEnumerable<SuggestActionItemDto>> GetAll(string? forUser = null)
     {
-        var data = await suggestRepository.GetAll();
+        var data = await suggestRepository.GetAll(forUser);
         return data;
     }
 
     [HttpPost]
-    public async Task<SuggestActionResponseDto> Send([FromBody]SuggestActionRequestDto data)
+    public async Task<SuggestActionResponseDto> Send([FromBody] SuggestActionRequestDto data)
     {
         var item = await processor.ProcessRequest(data);
 
-        if(item == null)
+        if (item == null)
         {
             return new SuggestActionResponseDto() { Id = Guid.Empty, Status = "AlreadyHasActiveItemInThatTimeRange" };
         }
@@ -42,7 +42,7 @@ public class SuggestActionController : ControllerBase
         {
             return new SuggestActionResponseDto() { Id = item.Id, Status = "Accepted" };
         }
-        else if(!item.IsConfirmed)
+        else if (!item.IsConfirmed)
         {
             return new SuggestActionResponseDto() { Id = item.Id, Status = "Created" };
         }
