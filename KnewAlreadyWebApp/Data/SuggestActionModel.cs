@@ -8,22 +8,23 @@ public class SuggestActionModel
     public string CategoryName { get; init; }
     public DateTime Created { get; init; }
     public DateTime? ConfirmDateTime { get; init; }
-    public bool IsCompleted { get; init; }
+    public bool IsConfirmed { get; init; }
     public int LifeTimeInMinutes { get; init; }
 
     public bool IsExpired
     {
         get
         {
-            bool result = DateTime.Now > Created.AddMinutes(LifeTimeInMinutes);
+            bool result = !IsConfirmed && DateTime.Now > Created.AddMinutes(LifeTimeInMinutes);
             return result;
         }
     }
+
     public TimeSpan? TimeLeft
     {
         get
         {
-            if (IsCompleted || IsExpired)
+            if (IsConfirmed || IsExpired)
             {
                 return null;
             }

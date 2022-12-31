@@ -9,15 +9,49 @@ namespace KnewAlreadyWebApp.Pages;
 
 public partial class LastRequestsPage
 {
+    const int MAXIMUM_ITEMS_IN_PAGE = 30;
+
     [Inject] public SuggetWebApiSwaggerClient apiClient { get; set; }
     [Inject] public IMapper mapper { get; set; }
 
     List<SuggestActionModel> userRequestItems = new List<SuggestActionModel>();
+    IEnumerable<SuggestActionModel> filteredUserRequestItems
+    {
+        get
+        {
+            IEnumerable<SuggestActionModel> filteredSource = userRequestItems;
+
+            if (new string[] { selectedFilterStatus, selectedFilterCategory }.Any(f => f != "Все"))
+            {
+                if (selectedFilterStatus != "Все")
+                {
+                    if (selectedFilterStatus == "Только законченные")
+                    {
+                        filteredSource = filteredSource.Where(i => i.IsConfirmed);
+                    }
+                    if (selectedFilterStatus == "Только ожидающие")
+                    {
+                        filteredSource = filteredSource.Where(i => !i.IsConfirmed && !i.IsExpired);
+                    }
+                }
+
+                if (selectedFilterCategory != "Все")
+                {
+                    filteredSource = filteredSource.Where(i => i.CategoryName == selectedFilterCategory);
+                }
+            }
+
+            return filteredSource.Take(MAXIMUM_ITEMS_IN_PAGE);
+        }
+    }
     List<SuggestActionModel> newItems = new List<SuggestActionModel>();
     List<string> availableCategories = new List<string>();
     System.Timers.Timer timer;
 
     [Parameter] public string Username { get; set; }
+
+    string selectedFilterStatus = "Все";
+    string selectedFilterCategory = "Все";
 
     public string getItemClasses(SuggestActionModel item)
     {
@@ -28,7 +62,7 @@ public partial class LastRequestsPage
             str += " new-item";
         }
 
-        if (item.IsExpired && !item.IsCompleted)
+        if (item.IsExpired && !item.IsConfirmed)
         {
             str += " expired";
         }
@@ -37,7 +71,7 @@ public partial class LastRequestsPage
     }
     public string getItemStatusIconClass(SuggestActionModel item)
     {
-        if (item.IsCompleted)
+        if (item.IsConfirmed)
         {
             return "fa-hands-helping completed";
         }
@@ -45,14 +79,9 @@ public partial class LastRequestsPage
         {
             return "fa-times";
         }
-        else
-        {
-            return "fa-question blink";
-        }
 
+        return "fa-question blink";
     }
-
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,7 +110,7 @@ public partial class LastRequestsPage
         foreach (var item in userRequestItems)
         {
             var alreadyAddedItem = tempItems.FirstOrDefault(i => i.Guid == item.Guid);
-            if (alreadyAddedItem == null || alreadyAddedItem.IsCompleted != item.IsCompleted)
+            if (alreadyAddedItem == null || alreadyAddedItem.IsConfirmed != item.IsConfirmed)
             {
                 newItems.Add(item);
             }

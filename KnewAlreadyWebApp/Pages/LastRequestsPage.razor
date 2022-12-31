@@ -14,14 +14,18 @@
 
     <div class="suggest-action-tool-panel my-2">
         <div class="d-inline">
+            <strong>Статус</strong>
             <div class="btn-group" role="group">
-                <button class="btn btn-primary p-2">
+                <button class="btn p-2 @(selectedFilterStatus == "Все" ? "btn-success" : "btn-outline-success")"
+                    @onclick="@(e => selectedFilterStatus = "Все")">
                     Все
                 </button>
-                <button class="btn btn-outline-primary p-2 ">
+                <button class="btn p-2 @(selectedFilterStatus == "Только ожидающие" ? "btn-success" : "btn-outline-success")"
+                    @onclick="@(e => selectedFilterStatus = "Только ожидающие")">
                     Только ожидающие
                 </button>
-                <button class="btn btn-outline-primary p-2 ">
+                <button class="btn p-2 @(selectedFilterStatus == "Только законченные" ? "btn-success" : "btn-outline-success")"
+                    @onclick="@(e => selectedFilterStatus = "Только законченные")">
                     Только законченные
                 </button>
             </div>
@@ -30,12 +34,14 @@
         <div class="d-inline">
             <strong>Категории</strong>
             <div class="btn-group" role="group">
-                <button class="btn btn-success">
+                <button class="btn p-2 @(selectedFilterCategory == "Все" ? "btn-success" : "btn-outline-success")"
+                    @onclick="@(e => selectedFilterCategory = "Все")">
                     Все
                 </button>
                 @foreach (var category in availableCategories)
                 {
-                    <button class="btn btn-outline-success">
+                    <button class="btn p-2 @(selectedFilterCategory == category ? "btn-success" : "btn-outline-success")"
+                    @onclick="@(e => selectedFilterCategory = category)">
                         @category
                     </button>
                 }
@@ -49,12 +55,17 @@
 <div class="suggest-action-list">
     @if (userRequestItems is not null)
     {
-        @foreach (var item in userRequestItems)
+        @foreach (var item in filteredUserRequestItems)
         {
             <div class=@getItemClasses(item)>
                 <div class="time-labels">
                     <p>Создан: <span>@item.Created.ToString("dd.MM.yyyy HH:mm")</span></p>
-                    @if (!item.IsExpired && !item.IsCompleted)
+                    <p>Лимит: <span>@item.LifeTimeInMinutes</span> мин.</p>
+                    @if (item.IsConfirmed)
+                    {
+                        <p>Выполнен: <span>@item.ConfirmDateTime.Value.ToString("dd.MM.yyyy HH:mm")</span></p>
+                    }
+                    else if (!item.IsExpired)
                     {
                         <p>Осталось: <span class="blink">@item.TimeLeft.Value.ToString("hh\\:mm")</span></p>
                     }
