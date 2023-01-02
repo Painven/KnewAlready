@@ -1,22 +1,24 @@
 ﻿@page "/register"
 @using KnewAlreadyWebApp.Data
-<PageTitle>Регистрация нового пользователя API</PageTitle>
-
-<h1>Регистрация нового пользователя API</h1>
+<PageTitle>Регистрация пользователя API</PageTitle>
 
 <div class="container">
     <EditForm Model="newUser" OnValidSubmit="RegisterNewUser">
         <DataAnnotationsValidator />
 
-        <div class="register-container">
+        <div class="profile-box">
+
+
             <div>
-                <label>Username</label>
-                <input type="text" class="form-control" @bind="newUser.Username" />
+                <img src="/assets/images/user.png" />
+                <label for="username">Имя пользователя</label>
+                <input type="text" class="form-control" id="username" @bind="newUser.Username" />
                 <ValidationMessage For="@(() => newUser.Username)" />
             </div>
             <div>
-                <label>Пароль</label>
-                <input type="password" class="form-control" @bind="newUser.Password" />
+                <img src="/assets/images/password.png" />
+                <label for="password">Пароль</label>
+                <input type="password" class="form-control" id="password" @bind="newUser.Password" />
                 <ValidationMessage For="@(() => newUser.Password)" />
             </div>
             <div>
@@ -24,8 +26,9 @@
                 {
                     <h3>Ошибка создания пользователя</h3>
                 }
-                <button class="btn btn-success btn-lg w-100">
-                    <span class="oi oi-check">Зарегистрироваться</span>
+                <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="submit">
+                    <span class="oi oi-check"></span>
+                    Зарегистрироваться
                 </button>
             </div>
         </div>
@@ -50,7 +53,7 @@
 
 
 @code {
-    UserModel newUser = new UserModel();
+    AppUser newUser = new AppUser();
     [Inject] SuggetWebApiSwaggerClient apiClient { get; set; }
     [Inject] NavigationManager navigationManager { get; set; }
     bool hasErrors = false;
@@ -58,16 +61,16 @@
     private async Task RegisterNewUser()
     {
         var result = await apiClient.CreateUserAsync(
-            new SuggestActionUserDto()
+            new CreateUserDto()
                 {
-                    Username = newUser.Username
+                    Username = newUser.Username,
+                    Password = newUser.Password
                 });
 
         if (result)
         {
-            navigationManager.NavigateTo($"/last-requests/user/{newUser.Username}");
+            navigationManager.NavigateTo("/");
             hasErrors = false;
-            newUser = new UserModel();
         }
         else
         {

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace KnewAlreadyWebApp.Data;
+namespace KnewAlreadyWebApp;
 
-public class UserModel
+public class AppUser
 {
     public Guid Id { get; set; }
 

@@ -1,5 +1,7 @@
 using KnewAlreadyCore;
 using KnewAlreadyWebApp;
+using KnewAlreadyWebApp.Data;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,7 @@ string apiHost = "http://localhost:5052/";
 #else
 string apiHost = "http://knewalready-api/";
 #endif
+
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -21,9 +24,12 @@ builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
 });
 
 builder.Services.AddSingleton<SuggetWebApiSwaggerClient>(x => new SuggetWebApiSwaggerClient(apiHost, new HttpClient()));
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
 var app = builder.Build();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (!app.Environment.IsDevelopment())
 {

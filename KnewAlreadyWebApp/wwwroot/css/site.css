@@ -1,5 +1,23 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+.profile-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+    .profile-box > div {
+        flex: 1 0 auto;
+        width: 300px;
+    }
+
+    .profile-box img {
+        width: 42px;
+        height: 42px;
+        margin: 6px;
+    }
 
 .oi::before {
     margin-right: 8px;

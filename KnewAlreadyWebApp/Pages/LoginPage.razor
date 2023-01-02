@@ -1,0 +1,57 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+<PageTitle>Вход</PageTitle>
+
+
+<div class="profile-box">
+    <div>
+        <img src="/assets/images/user.png" />
+        <label for="username">Имя пользователя</label>
+        <input type="text" class="form-control" id="username" @bind="user.Username" />
+    </div>
+    <div>
+        <img src="/assets/images/password.png" />
+        <label for="password">Пароль</label>
+        <input type="password" class="form-control" id="password" @bind="user.Password" />
+    </div>
+
+    <div>
+        <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="submit" @onclick="LoginUser">
+            <span class="oi oi-check"></span>
+            Войти
+        </button>
+        @if (hasErrors)
+        {
+            <p><strong style="color: red;">Ошибка: не верный логин или пароль!</strong></p>
+        }
+    </div>
+    <div>
+        <p>Нет аккаунта ? <a href="/register">Зарегистрироваться</a></p>
+    </div>
+</div>
+
+
+@code {
+    bool hasErrors = false;
+
+    [Inject] public ProtectedLocalStorage BrowserStorage { get; set; }
+    [Inject] public AuthenticationStateProvider AuthStateProvider { get; set; }
+    [Inject] public NavigationManager navManager { get; set; }
+
+    public AppUser user = new AppUser();
+
+    private async Task LoginUser()
+    {
+        var state = await ((CustomAuthenticationStateProvider)AuthStateProvider).ChangeUser(user.Username, user.Password);
+        if (!state?.User.IsInRole("anonymous") ?? false)
+        {
+            await BrowserStorage.SetAsync(nameof(AppUser.Username), user.Username);
+            await BrowserStorage.SetAsync(nameof(AppUser.Password), user.Password);
+            navManager.NavigateTo("/");
+        }
+        else
+        {
+            hasErrors = true;
+        }
+    }
+}

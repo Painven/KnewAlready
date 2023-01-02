@@ -13,6 +13,7 @@ builder.Services.AddDbContextFactory<KnewAlreadyDbContext>(options =>
 
     });
 
+builder.Services.AddLogging();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<ISuggestActionRepository, SuggestActionRepository>();
 builder.Services.AddSingleton<ISuggestActionUserRepository, SuggestActionUserRepository>();

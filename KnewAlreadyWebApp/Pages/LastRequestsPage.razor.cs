@@ -2,7 +2,9 @@
 using KnewAlreadyCore;
 using KnewAlreadyWebApp.Data;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Claims;
 using System.Timers;
 
 namespace KnewAlreadyWebApp.Pages;
@@ -49,6 +51,14 @@ public partial class LastRequestsPage
     System.Timers.Timer timer;
 
     [Parameter] public string Username { get; set; }
+    [CascadingParameter] public AuthenticationState AuthState { get; set; }
+
+    public string ContextUsername
+    {
+        get => !string.IsNullOrWhiteSpace(Username) && (AuthState?.User.IsInRole("administrator") ?? false) ?
+            Username :
+            AuthState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? null;
+    }
 
     string selectedFilterStatus = "Все";
     string selectedFilterCategory = "Все";
@@ -94,10 +104,10 @@ public partial class LastRequestsPage
 
     protected override async Task OnParametersSetAsync()
     {
-        timer.Stop();
+        timer?.Stop();
         userRequestItems.Clear();
         await LoadData();
-        timer.Start();
+        timer?.Start();
     }
 
     private async void TimerTick(object sender, ElapsedEventArgs e)
@@ -121,7 +131,7 @@ public partial class LastRequestsPage
 
     private async Task LoadData()
     {
-        var data = await apiClient.SuggestActionsAllAsync(Username);
+        var data = await apiClient.SuggestActionsAllAsync(ContextUsername);
 
         userRequestItems = mapper.Map<IEnumerable<SuggestActionModel>>(data).ToList();
 

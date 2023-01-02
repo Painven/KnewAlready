@@ -25,6 +25,8 @@ public class SuggestActionController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<SuggestActionItemDto>> GetAll(string? forUser = null)
     {
+        logger.LogInformation($"ֲûחמג GetAll forUser='{forUser ?? String.Empty}'");
+
         var data = await suggestRepository.GetAll(forUser);
         return data;
     }
@@ -32,6 +34,8 @@ public class SuggestActionController : ControllerBase
     [HttpPost]
     public async Task<SuggestActionResponseDto> Send([FromBody] SuggestActionRequestDto data)
     {
+        logger.LogInformation($"ֲûחמג Send data='{JsonSerializer.Serialize(data)}'");
+
         var item = await processor.ProcessRequest(data);
 
         if (item == null)

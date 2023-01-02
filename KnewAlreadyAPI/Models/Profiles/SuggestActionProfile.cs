@@ -17,7 +17,9 @@ public class UserMapperProfile : Profile
 {
     public UserMapperProfile()
     {
-        CreateMap<SuggestActionUserDto, User>();
-        CreateMap<User, SuggestActionUserDto>();
+        CreateMap<CreateUserDto, User>();
+
+        CreateMap<UserDto, User>();
+        CreateMap<User, UserDto>();
     }
 }

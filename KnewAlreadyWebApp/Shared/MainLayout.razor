@@ -1,18 +1,21 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inherits LayoutComponentBase
 
 <PageTitle>KnewAlreadyWebApp</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div id="main-content" class="container">
-            @Body
+<CascadingValue Value="@AuthState">
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu />
         </div>
-    </main>
-</div>
+
+        <main>
+            <div id="main-content" class="container">
+                @Body
+            </div>
+        </main>
+    </div>
+</CascadingValue>
 
 
 <style>
@@ -21,7 +24,29 @@
         background-size: cover;
     }
 
-    main .container {
-        max-width: 1600px;
-    }
+        main .container {
+            max-width: 1600px;
+        }
 </style>
+
+@code {
+
+    [Inject] public ProtectedLocalStorage BrowserStorage { get; set; }
+    [Inject] public AuthenticationStateProvider AuthStateProvider { get; set; }
+    [Inject] public NavigationManager navManager { get; set; }
+    [CascadingParameter] public AuthenticationState AuthState { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var username = (await BrowserStorage.GetAsync<string>(nameof(AppUser.Username))).Value;
+            var password = (await BrowserStorage.GetAsync<string>(nameof(AppUser.Password))).Value;
+            if (username != null && password != null)
+            {
+                AuthState = await ((CustomAuthenticationStateProvider)AuthStateProvider).ChangeUser(username, password);
+            }
+            StateHasChanged();
+        }
+    }
+}

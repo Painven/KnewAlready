@@ -1,27 +1,33 @@
 ﻿@page "/profile"
+@attribute [Authorize]
+
 <PageTitle>Настройки пользователя</PageTitle>
 
 <h1>Профиль</h1>
 
 <div class="container">
-    <EditForm Model="contextUser" OnValidSubmit="SaveUserProfileChanges">
-    <DataAnnotationsValidator />
+    <EditForm Model="@contextUser" OnValidSubmit="SaveUserProfileChanges">
+        <DataAnnotationsValidator />
         <div class="profile-box">
             <div>
                 <img src="/assets/images/user.png" />
                 <label for="username">Имя пользователя</label>
-                <input type="text" class="form-control" id="username" readonly />
+                <input type="text" class="form-control" id="username" readonly value="@contextUser.Username" />
+            </div>
+            <div>
+                <img src="/assets/images/password.png" />
+                <label for="password">Пароль</label>
+                <input type="password" class="form-control" id="password" value="@contextUser.Password" />
             </div>
             <div>
                 <img src="/assets/images/email.png" />
-
                 <label for="email">Email</label>
-                <input type="text" class="form-control" id="email" />
+                <input type="text" class="form-control" id="email" value="@contextUser.Email" />
             </div>
             <div>
                 <img src="/assets/images/telegram.png" />
                 <label for="telegram">Telegram</label>
-                <input type="text" class="form-control" id="telegram" />
+                <input type="text" class="form-control" id="telegram" value="@contextUser.Telegram" />
             </div>
             <div>
                 <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="submit">
@@ -31,36 +37,13 @@
             </div>
         </div>
     </EditForm>
-
-
 </div>
 
-<style>
-    .profile-box {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-    }
-
-        .profile-box > div {
-            flex: 1 0 auto;
-            width: 300px;
-        }
-
-        .profile-box img {
-            width: 42px;
-            height: 42px;
-            margin: 6px;
-        }
-</style>
-
 @code {
-    UserModel contextUser = new UserModel();
+    AppUser contextUser = new AppUser();
 
     private async Task SaveUserProfileChanges()
     {
-
+        await Task.Delay(TimeSpan.FromSeconds(1));
     }
 }

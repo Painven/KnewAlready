@@ -8,10 +8,12 @@ namespace KnewAlreadyAPI;
 
 public interface ISuggestActionUserRepository
 {
-    Task<SuggestActionUserDto[]> GetAll();
+    Task<UserDto[]> GetAll();
     Task<Guid> GetUserIdByName(string username);
     Task<string> GetUsernameByGuid(Guid guid);
-    Task<bool> Create(SuggestActionUserDto user);
+    Task<bool> Create(CreateUserDto user);
+    Task<bool> Update(UserDto user);
+    Task<UserDto> Login(string username, string password);
 }
 
 public class SuggestActionUserRepository : ISuggestActionUserRepository
@@ -25,9 +27,33 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
         this.mapper = mapper;
     }
 
-    public async Task<bool> Create(SuggestActionUserDto user)
+    public async Task<bool> Update(UserDto user)
     {
-        if (string.IsNullOrWhiteSpace(user.Username))
+        if (user.Id == Guid.Empty)
+        {
+            return false;
+        }
+
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var userEntity = db.Users.FirstOrDefault(u => u.Id == user.Id);
+
+        if (userEntity == null)
+        {
+            return false;
+        }
+
+        userEntity.Email = user.Email;
+        userEntity.Telegram = user.Telegram;
+
+        var hasChanges = await db.SaveChangesAsync() > 0;
+
+        return hasChanges;
+    }
+
+    public async Task<bool> Create(CreateUserDto user)
+    {
+        if (string.IsNullOrWhiteSpace(user.Username) || (user.Password?.Length ?? 0) < 8)
         {
             return false;
         }
@@ -41,6 +67,7 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
 
         var newUser = mapper.Map<User>(user);
         newUser.Id = Guid.NewGuid();
+        newUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
         db.Users.Add(newUser);
 
@@ -49,11 +76,11 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
         return result > 0;
     }
 
-    public async Task<SuggestActionUserDto[]> GetAll()
+    public async Task<UserDto[]> GetAll()
     {
         using var db = await dbFactory.CreateDbContextAsync();
 
-        var items = mapper.Map<IEnumerable<SuggestActionUserDto>>(db.Users);
+        var items = mapper.Map<IEnumerable<UserDto>>(db.Users);
 
         return items.ToArray();
     }
@@ -78,5 +105,19 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
         var item = await db.Users.SingleOrDefaultAsync(u => u.Id == guid);
 
         return item?.Username ?? string.Empty;
+    }
+
+    public async Task<UserDto?> Login(string username, string password)
+    {
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var existsUser = db.Users.FirstOrDefault(u => u.Username == username);
+
+        if (existsUser != null && BCrypt.Net.BCrypt.Verify(password, existsUser.Password))
+        {
+            return mapper.Map<UserDto>(existsUser);
+        }
+
+        return null;
     }
 }
