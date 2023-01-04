@@ -16,7 +16,6 @@ public class UserSuggestProcessor
     public async Task<SuggestActionItemDto> ProcessRequest(SuggestActionRequestDto request)
     {
         throw new NotImplementedException();
-
         /*
         IEnumerable<SuggestActionItemDto> data = await suggestRepository.GetAll();
         DateTime now = DateTime.Now;

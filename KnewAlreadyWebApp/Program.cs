@@ -24,7 +24,9 @@ builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
 });
 
 
-builder.Services.AddSingleton<SuggestApiSwaggerClient>(x => new SuggestApiSwaggerClient(apiHost, new HttpClient()));
+builder.Services.AddSingleton<JwtTokenValidator>();
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<SuggestApiSwaggerClient>(x => new SuggestApiSwaggerClient(apiHost, x.GetService<HttpClient>()));
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 
 var app = builder.Build();

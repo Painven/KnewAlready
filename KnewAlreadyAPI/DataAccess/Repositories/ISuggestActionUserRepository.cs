@@ -11,7 +11,7 @@ public interface ISuggestActionUserRepository
     Task<UserDto[]> GetAll();
     Task<bool> Create(CreateUserDto user);
     Task<bool> Update(UpdateUserDto user);
-    Task<UserDto?> Login(string username, string password);
+    Task<User> Login(string username, string password);
     Task<UserDto?> GetUserInfo(Guid userId);
     Task SetEmailVerificationCode(Guid userId, string? code);
 }
@@ -98,7 +98,7 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
         return Enumerable.Empty<UserDto>().ToArray();
     }
 
-    public async Task<UserDto?> Login(string username, string password)
+    public async Task<User> Login(string username, string password)
     {
         using var db = await dbFactory.CreateDbContextAsync();
 
@@ -106,7 +106,7 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
 
         if (existsUser != null && BCrypt.Net.BCrypt.Verify(password, existsUser.Password))
         {
-            return mapper.Map<UserDto>(existsUser);
+            return existsUser;
         }
 
         return null;

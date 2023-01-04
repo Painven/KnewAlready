@@ -1,7 +1,10 @@
 ﻿using KnewAlreadyAPI.Dtos;
 using KnewAlreadyAPI.Models;
+using KnewAlreadyCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace KnewAlreadyAPI.Controllers;
@@ -11,35 +14,35 @@ public class UserController : ControllerBase
 {
     private readonly ISuggestActionUserRepository userRepository;
     private readonly EmailVerifier emailVerifier;
+    private readonly JwtTokenGenerator tokenGenerator;
     private readonly ILogger<UserController> logger;
 
-    public UserController(ISuggestActionUserRepository userRepository, ILogger<UserController> logger, EmailVerifier emailVerifier)
+    public UserController(ISuggestActionUserRepository userRepository,
+        ILogger<UserController> logger,
+        EmailVerifier emailVerifier,
+        JwtTokenGenerator tokenGenerator)
     {
         this.userRepository = userRepository;
         this.logger = logger;
         this.emailVerifier = emailVerifier;
+        this.tokenGenerator = tokenGenerator;
     }
 
-    [HttpGet(Name = "GetAllUsers")]
+    [HttpGet("list", Name = "GetAllUsers"), Authorize(Roles = "administrator")]
     public async Task<UserDto[]> GetAll()
     {
-        logger.LogInformation($"Вызов GetAll");
-
         var users = await userRepository.GetAll();
 
         return users;
     }
 
-    [HttpGet("{id}", Name = "GetUserInfo")]
-    public async Task<UserDto?> GetById(string id)
+    [HttpGet(Name = "GetUserInfo"), Authorize]
+    public async Task<UserDto?> GetUserInfo()
     {
-        if (Guid.TryParse(id, out Guid userId))
-        {
-            if (userId == Guid.Empty)
-            {
-                return null;
-            }
+        var claims = HttpContext.User.Identity as ClaimsIdentity;
 
+        if (Guid.TryParse(claims?.FindFirst("sid")?.Value, out Guid userId))
+        {
             var result = await userRepository.GetUserInfo(userId);
             return result;
         }
@@ -55,7 +58,7 @@ public class UserController : ControllerBase
         return result;
     }
 
-    [HttpPut(Name = "UpdateProfile")]
+    [HttpPut(Name = "UpdateProfile"), Authorize]
     public async Task<bool> UpdateProfile(UpdateUserDto user)
     {
         var result = await userRepository.Update(user);
@@ -64,23 +67,45 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login", Name = "LoginUser")]
-    public async Task<UserDto?> LoginUser(string userName, string password)
+    public async Task<ApiToken> LoginUser(string userName, string password)
     {
-        var userDto = await userRepository.Login(userName, password);
+        var user = await userRepository.Login(userName, password);
 
-        return userDto;
+        if (user != null)
+        {
+            var token = tokenGenerator.GenerateJwtSecurityToken(user);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                return new ApiToken(token);
+            }
+        }
+        return ApiToken.Empty;
     }
 
-    [HttpPost("send-email-verifying-code", Name = "SendEmailVirifyCode")]
-    public async Task SendEmailVirifyCode(string id)
+    [HttpPost("send-email-verifying-code", Name = "SendEmailVirifyCode"), Authorize]
+    public async Task SendEmailVirifyCode()
     {
-        await emailVerifier.SendCode(id);
+        var claims = HttpContext.User.Identity as ClaimsIdentity;
+
+        if (Guid.TryParse(claims?.FindFirst("sid")?.Value, out Guid userId))
+        {
+            await emailVerifier.SendCode(userId);
+        }
     }
 
-    [HttpPost("verify-email-code", Name = "VerifyUserEmail")]
-    public async Task<bool> VerifyUserEmail(string id, string code)
+    [HttpPost("verify-email-code", Name = "VerifyUserEmail"), Authorize]
+    public async Task<bool> VerifyUserEmail(string code)
     {
-        var result = await emailVerifier.VerifyCode(id, code);
-        return result;
+        var claims = HttpContext.User.Identity as ClaimsIdentity;
+
+        if (Guid.TryParse(claims?.FindFirst("sid")?.Value, out Guid userId))
+        {
+            var result = await emailVerifier.VerifyCode(userId, code);
+            return result;
+        }
+        return false;
+
+
     }
 }

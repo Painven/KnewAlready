@@ -1,4 +1,5 @@
 using KnewAlreadyAPI.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -7,6 +8,7 @@ namespace KnewAlreadyAPI.Controllers;
 
 [ApiController]
 [Route("api/suggest-actions")]
+[Authorize]
 public class SuggestActionController : ControllerBase
 {
     private readonly UserSuggestProcessor processor;
@@ -22,7 +24,7 @@ public class SuggestActionController : ControllerBase
         this.logger = logger;
     }
 
-    [HttpGet]
+    [HttpGet, Authorize(Roles = "administrator")]
     public async Task<IEnumerable<SuggestActionItemDto>> GetAll(string? forUser = null)
     {
         logger.LogInformation($"ֲûחמג GetAll forUser='{forUser ?? String.Empty}'");
@@ -31,7 +33,7 @@ public class SuggestActionController : ControllerBase
         return data;
     }
 
-    [HttpPost]
+    [HttpPost, Authorize]
     public async Task<SuggestActionResponseDto> Send([FromBody] SuggestActionRequestDto data)
     {
         logger.LogInformation($"ֲûחמג Send data='{JsonSerializer.Serialize(data)}'");

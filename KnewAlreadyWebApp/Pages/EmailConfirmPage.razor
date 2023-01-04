@@ -31,7 +31,7 @@ else
         if (!string.IsNullOrWhiteSpace(code) && !string.IsNullOrWhiteSpace(loginedUser?.Id.ToString()))
         {
             virifyResult = null;
-            virifyResult = await apiClient.VerifyUserEmailAsync(loginedUser.Id.ToString(), code);
+            virifyResult = await apiClient.VerifyUserEmailAsync(code);
             StateHasChanged();
         }
     }

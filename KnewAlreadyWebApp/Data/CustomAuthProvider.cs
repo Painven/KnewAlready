@@ -1,6 +1,7 @@
 ﻿using KnewAlreadyCore;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace KnewAlreadyWebApp.Data;
@@ -9,11 +10,18 @@ public class CustomAuthProvider : AuthenticationStateProvider
 {
     private readonly ProtectedLocalStorage protectedLocalStorage;
     private readonly SuggestApiSwaggerClient apiClient;
+    private readonly JwtTokenValidator tokenValidator;
+    private readonly HttpClient httpClient;
 
-    public CustomAuthProvider(ProtectedLocalStorage protectedLocalStorage, SuggestApiSwaggerClient apiClient)
+    public CustomAuthProvider(ProtectedLocalStorage protectedLocalStorage,
+        SuggestApiSwaggerClient apiClient,
+        JwtTokenValidator tokenValidator,
+        HttpClient httpClient)
     {
         this.protectedLocalStorage = protectedLocalStorage;
         this.apiClient = apiClient;
+        this.tokenValidator = tokenValidator;
+        this.httpClient = httpClient;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -59,24 +67,14 @@ public class CustomAuthProvider : AuthenticationStateProvider
             return GetDefaultState();
         }
 
-        var userInfo = await apiClient.LoginUserAsync(username, password);
+        var loginResult = await apiClient.LoginUserAsync(username, password);
 
-        //Нет доступа (не верный логин и/или пароль)
-        if (userInfo == null || string.IsNullOrWhiteSpace(userInfo.UserGroup))
-        {
-            return GetDefaultState();
-        }
+        var claims = tokenValidator.GetTokenClaims(loginResult.Token);
+        var identity = new ClaimsIdentity(claims, "login_form");
+        var claimsPrincipal = new ClaimsPrincipal(identity);
+        var state = new AuthenticationState(claimsPrincipal);
 
-
-        //Создаем claims
-        var identity = new ClaimsIdentity(new[]
-        {
-                new Claim(ClaimTypes.Name, userInfo.Username),
-                new Claim(ClaimTypes.Role, userInfo.UserGroup),
-                new Claim(ClaimTypes.Sid, userInfo.Id.ToString())
-            }, "login_form");
-        var user = new ClaimsPrincipal(identity);
-        var state = new AuthenticationState(user);
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResult.Token);
 
         await protectedLocalStorage.SetAsync("username", username);
         await protectedLocalStorage.SetAsync("password", password);

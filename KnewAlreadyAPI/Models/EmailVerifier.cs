@@ -9,24 +9,24 @@ public class EmailVerifier
         this.userRepository = userRepository;
     }
 
-    public async Task SendCode(string userId)
+    public async Task SendCode(Guid userId)
     {
-        var user = await userRepository.GetUserInfo(Guid.Parse(userId));
+        var user = await userRepository.GetUserInfo(userId);
 
         if (user != null && !user.IsEmailConfirmed)
         {
             string code = Guid.NewGuid().ToString();
-            await userRepository.SetEmailVerificationCode(user.Id, code);
+            await userRepository.SetEmailVerificationCode(userId, code);
         }
     }
 
-    public async Task<bool> VerifyCode(string userId, string code)
+    public async Task<bool> VerifyCode(Guid userId, string code)
     {
-        var user = await userRepository.GetUserInfo(Guid.Parse(userId));
+        var user = await userRepository.GetUserInfo(userId);
 
         if (user != null && !user.IsEmailConfirmed && user?.EmailConfirmationCode == code)
         {
-            await userRepository.SetEmailVerificationCode(user.Id, "OK");
+            await userRepository.SetEmailVerificationCode(userId, "OK");
             return true;
         }
 

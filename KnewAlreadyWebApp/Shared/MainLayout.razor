@@ -49,8 +49,7 @@
         var state = await authState;
         if (state?.User?.Identity?.Name != "anonymous")
         {
-            string? sid = state?.User?.Claims?.FirstOrDefault(c => c.Type.EndsWith("/sid"))?.Value;
-            var userDto = await apiClient.GetUserInfoAsync(sid);
+            var userDto = await apiClient.GetUserInfoAsync();
             loginedUser = mapper.Map<AppUser>(userDto);
             await InvokeAsync(StateHasChanged);
         }
