@@ -23,8 +23,9 @@ builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
     httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
 });
 
-builder.Services.AddSingleton<SuggetWebApiSwaggerClient>(x => new SuggetWebApiSwaggerClient(apiHost, new HttpClient()));
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
+builder.Services.AddSingleton<SuggestApiSwaggerClient>(x => new SuggestApiSwaggerClient(apiHost, new HttpClient()));
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 
 var app = builder.Build();
 

@@ -7,12 +7,12 @@
     <div>
         <img src="/assets/images/user.png" />
         <label for="username">Имя пользователя</label>
-        <input type="text" class="form-control" id="username" @bind="user.Username" />
+        <input type="text" class="form-control" id="username" @bind="username" />
     </div>
     <div>
         <img src="/assets/images/password.png" />
         <label for="password">Пароль</label>
-        <input type="password" class="form-control" id="password" @bind="user.Password" />
+        <input type="password" class="form-control" id="password" @bind="password" />
     </div>
 
     <div>
@@ -30,28 +30,24 @@
     </div>
 </div>
 
-
 @code {
     bool hasErrors = false;
 
-    [Inject] public ProtectedLocalStorage BrowserStorage { get; set; }
-    [Inject] public AuthenticationStateProvider AuthStateProvider { get; set; }
+    [Inject] public AuthenticationStateProvider authStateProvider { get; set; }
     [Inject] public NavigationManager navManager { get; set; }
 
-    public AppUser user = new AppUser();
+    string username = string.Empty;
+    string password = string.Empty;
 
     private async Task LoginUser()
     {
-        var state = await ((CustomAuthenticationStateProvider)AuthStateProvider).ChangeUser(user.Username, user.Password);
-        if (!state?.User.IsInRole("anonymous") ?? false)
+        var state = await ((CustomAuthProvider)authStateProvider).Login(username, password);
+
+        hasErrors = state.User.Identity.Name == "anonymous";
+
+        if (!hasErrors)
         {
-            await BrowserStorage.SetAsync(nameof(AppUser.Username), user.Username);
-            await BrowserStorage.SetAsync(nameof(AppUser.Password), user.Password);
             navManager.NavigateTo("/");
-        }
-        else
-        {
-            hasErrors = true;
         }
     }
 }

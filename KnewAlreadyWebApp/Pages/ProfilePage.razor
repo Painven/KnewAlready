@@ -1,49 +1,74 @@
 ﻿@page "/profile"
+@using AutoMapper
 @attribute [Authorize]
 
 <PageTitle>Настройки пользователя</PageTitle>
 
-<h1>Профиль</h1>
+
 
 <div class="container">
-    <EditForm Model="@contextUser" OnValidSubmit="SaveUserProfileChanges">
-        <DataAnnotationsValidator />
-        <div class="profile-box">
-            <div>
-                <img src="/assets/images/user.png" />
-                <label for="username">Имя пользователя</label>
-                <input type="text" class="form-control" id="username" readonly value="@contextUser.Username" />
-            </div>
-            <div>
-                <img src="/assets/images/password.png" />
-                <label for="password">Пароль</label>
-                <input type="password" class="form-control" id="password" value="@contextUser.Password" />
-            </div>
-            <div>
-                <img src="/assets/images/email.png" />
-                <label for="email">Email</label>
-                <input type="text" class="form-control" id="email" value="@contextUser.Email" />
-            </div>
-            <div>
-                <img src="/assets/images/telegram.png" />
-                <label for="telegram">Telegram</label>
-                <input type="text" class="form-control" id="telegram" value="@contextUser.Telegram" />
-            </div>
-            <div>
-                <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="submit">
-                    <span class="oi oi-check"></span>
-                    Сохранить
-                </button>
-            </div>
+    <div class="profile-box">
+        <h1>Профиль</h1>
+        <div>
+            <img src="/assets/images/user.png" />
+            <label for="username">Имя пользователя</label>
+            <input type="text" class="form-control" id="username" readonly @bind="contextUser.Username" />
         </div>
-    </EditForm>
+        <div>
+            <img src="/assets/images/email.png" />
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" @bind="contextUser.Email" />
+        </div>
+        <div>
+            <img src="/assets/images/telegram.png" />
+            <label for="telegram">Telegram</label>
+            <input type="text" class="form-control" id="telegram" @bind="contextUser.Telegram" />
+        </div>
+        <div>
+            <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="button" @onclick="SaveUserProfileChanges">
+                <span class="oi oi-check"></span>
+                Сохранить
+            </button>
+        </div>
+        <div>
+            <button class="btn btn-lg btn-warning p-3 mt-3 w-100" type="button" @onclick="Logout">
+                <span class="oi oi-account-logout"></span>
+                Выйти из аккаунта
+            </button>
+        </div>
+    </div>
 </div>
 
 @code {
-    AppUser contextUser = new AppUser();
+    [Inject] public SuggestApiSwaggerClient apiClient { get; set; }
+    [Inject] public AuthenticationStateProvider authStateProvider { get; set; }
+    [Inject] public IMapper mapper { get; set; }
+
+    [CascadingParameter] public AppUser loginedUser { get; set; }
+    private AppUser contextUser = new AppUser();
 
     private async Task SaveUserProfileChanges()
     {
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        var dto = mapper.Map<UpdateUserDto>(contextUser);
+        await apiClient.UpdateProfileAsync(dto);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (loginedUser != null)
+        {
+            contextUser = new AppUser()
+                {
+                    Id = loginedUser.Id,
+                    Username = loginedUser.Username,
+                    Email = loginedUser.Email,
+                    Telegram = loginedUser.Telegram
+                };
+        }
+    }
+
+    private async Task Logout()
+    {
+        await ((CustomAuthProvider)authStateProvider).Logout();
     }
 }

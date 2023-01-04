@@ -1,9 +1,11 @@
-﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+﻿@using AutoMapper
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inherits LayoutComponentBase
+@implements IDisposable
 
 <PageTitle>KnewAlreadyWebApp</PageTitle>
 
-<CascadingValue Value="@AuthState">
+<CascadingValue Value="@loginedUser">
     <div class="page">
         <div class="sidebar">
             <NavMenu />
@@ -30,23 +32,33 @@
 </style>
 
 @code {
+    [Inject] public AuthenticationStateProvider authStateProvider { get; set; }
+    [Inject] public SuggestApiSwaggerClient apiClient { get; set; }
+    [Inject] public IMapper mapper { get; set; }
 
-    [Inject] public ProtectedLocalStorage BrowserStorage { get; set; }
-    [Inject] public AuthenticationStateProvider AuthStateProvider { get; set; }
-    [Inject] public NavigationManager navManager { get; set; }
-    [CascadingParameter] public AuthenticationState AuthState { get; set; }
+    public AppUser loginedUser;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
+        authStateProvider.AuthenticationStateChanged += ChangeLoginedUser;
+        await authStateProvider.GetAuthenticationStateAsync();
+    }
+
+    private async void ChangeLoginedUser(Task<AuthenticationState> authState)
+    {
+        var state = await authState;
+        if (state?.User?.Identity?.Name != "anonymous")
         {
-            var username = (await BrowserStorage.GetAsync<string>(nameof(AppUser.Username))).Value;
-            var password = (await BrowserStorage.GetAsync<string>(nameof(AppUser.Password))).Value;
-            if (username != null && password != null)
-            {
-                AuthState = await ((CustomAuthenticationStateProvider)AuthStateProvider).ChangeUser(username, password);
-            }
-            StateHasChanged();
+            string? sid = state?.User?.Claims?.FirstOrDefault(c => c.Type.EndsWith("/sid"))?.Value;
+            var userDto = await apiClient.GetUserInfoAsync(sid);
+            loginedUser = mapper.Map<AppUser>(userDto);
+            await InvokeAsync(StateHasChanged);
         }
     }
+
+    public void Dispose()
+    {
+        authStateProvider.AuthenticationStateChanged -= ChangeLoginedUser;
+    }
+
 }

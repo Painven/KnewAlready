@@ -17,7 +17,7 @@ public partial class App : Application
         string apiUri = "http://90.156.211.247:5052/";
 #endif
 
-        var vm = new MainWindowViewModel(new SuggetWebApiSwaggerClient(apiUri, new HttpClient()));
+        var vm = new MainWindowViewModel(new SuggestApiSwaggerClient(apiUri, new HttpClient()));
         var mainWindow = new MainWindow();
         mainWindow.DataContext = vm;
         mainWindow.Show();

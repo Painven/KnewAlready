@@ -11,7 +11,7 @@ namespace KnewAlreadyDesktopClient.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private readonly SuggetWebApiSwaggerClient apiClient;
+    private readonly SuggestApiSwaggerClient apiClient;
 
     public ObservableCollection<UserModel> Users { get; } = new ObservableCollection<UserModel>();
 
@@ -59,7 +59,7 @@ public class MainWindowViewModel : ViewModelBase
         LoadedCommand = new LambdaCommand(async e => await Loaded());
     }
 
-    public MainWindowViewModel(SuggetWebApiSwaggerClient apiClient) : this()
+    public MainWindowViewModel(SuggestApiSwaggerClient apiClient) : this()
     {
         this.apiClient = apiClient;
     }

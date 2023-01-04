@@ -1,7 +1,9 @@
 using KnewAlreadyAPI;
 using KnewAlreadyAPI.DataAccess;
 using KnewAlreadyAPI.Dtos;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,6 @@ builder.Services.AddDbContextFactory<KnewAlreadyDbContext>(options =>
         string connectionString = builder.Configuration.GetConnectionString("default");
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         options.UseNpgsql(connectionString);
-
     });
 
 builder.Services.AddLogging();

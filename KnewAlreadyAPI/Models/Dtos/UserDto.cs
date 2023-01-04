@@ -12,8 +12,14 @@ public record UserDto
     public string Username { get; init; }
     public string? Telegram { get; init; }
     public string? Email { get; init; }
-    public string? Password { get; init; }
     public string? UserGroup { get; init; }
+}
+
+public record UpdateUserDto
+{
+    public Guid Id { get; init; }
+    public string? Telegram { get; init; }
+    public string? Email { get; init; }
 }
 
 public record CreateUserDto

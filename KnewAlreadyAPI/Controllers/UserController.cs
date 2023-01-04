@@ -27,21 +27,34 @@ public class UserController : ControllerBase
         return users;
     }
 
+    [HttpGet("{id}", Name = "GetUserInfo")]
+    public async Task<UserDto?> GetById(string id)
+    {
+        if (Guid.TryParse(id, out Guid userId))
+        {
+            if (userId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var result = await userRepository.GetUserInfo(userId);
+            return result;
+        }
+
+        return null;
+    }
+
     [HttpPost(Name = "CreateUser")]
     public async Task<bool> CreateUser(CreateUserDto user)
     {
-        logger.LogInformation($"Вызов CreateUser data='{JsonSerializer.Serialize(user)}'");
-
         var result = await userRepository.Create(user);
 
         return result;
     }
 
     [HttpPut(Name = "UpdateProfile")]
-    public async Task<bool> UpdateProfile(UserDto user)
+    public async Task<bool> UpdateProfile(UpdateUserDto user)
     {
-        logger.LogInformation($"Вызов UpdateProfile data='{JsonSerializer.Serialize(user)}'");
-
         var result = await userRepository.Update(user);
 
         return result;
@@ -50,8 +63,6 @@ public class UserController : ControllerBase
     [HttpPost("login", Name = "LoginUser")]
     public async Task<UserDto?> LoginUser(string userName, string password)
     {
-        logger.LogInformation($"Вызов LoginUser userName='{userName}', password='{password}'");
-
         var userDto = await userRepository.Login(userName, password);
 
         return userDto;

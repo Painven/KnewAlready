@@ -12,8 +12,9 @@ public interface ISuggestActionUserRepository
     Task<Guid> GetUserIdByName(string username);
     Task<string> GetUsernameByGuid(Guid guid);
     Task<bool> Create(CreateUserDto user);
-    Task<bool> Update(UserDto user);
-    Task<UserDto> Login(string username, string password);
+    Task<bool> Update(UpdateUserDto user);
+    Task<UserDto?> Login(string username, string password);
+    Task<UserDto?> GetUserInfo(Guid guid);
 }
 
 public class SuggestActionUserRepository : ISuggestActionUserRepository
@@ -27,7 +28,7 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
         this.mapper = mapper;
     }
 
-    public async Task<bool> Update(UserDto user)
+    public async Task<bool> Update(UpdateUserDto user)
     {
         if (user.Id == Guid.Empty)
         {
@@ -76,13 +77,17 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
         return result > 0;
     }
 
-    public async Task<UserDto[]> GetAll()
+    public async Task<UserDto[]?> GetAll()
     {
         using var db = await dbFactory.CreateDbContextAsync();
 
-        var items = mapper.Map<IEnumerable<UserDto>>(db.Users);
+        if (db.Users.Any())
+        {
+            var items = mapper.Map<IEnumerable<UserDto>>(db.Users);
 
-        return items.ToArray();
+            return items.ToArray();
+        }
+        return Enumerable.Empty<UserDto>().ToArray();
     }
 
     public async Task<Guid> GetUserIdByName(string username)
@@ -118,6 +123,19 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
             return mapper.Map<UserDto>(existsUser);
         }
 
+        return null;
+    }
+
+    public async Task<UserDto?> GetUserInfo(Guid guid)
+    {
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var existsUser = db.Users.FirstOrDefault(u => u.Id == guid);
+
+        if (existsUser != null)
+        {
+            return mapper.Map<UserDto>(existsUser);
+        }
         return null;
     }
 }

@@ -13,11 +13,12 @@ public partial class LastRequestsPage
 {
     const int MAXIMUM_ITEMS_IN_PAGE = 30;
 
-    [Inject] public SuggetWebApiSwaggerClient apiClient { get; set; }
+    [Inject] public SuggestApiSwaggerClient apiClient { get; set; }
     [Inject] public IMapper mapper { get; set; }
+    [CascadingParameter] public AppUser loginerUser { get; set; }
 
-    List<SuggestActionModel> userRequestItems = new List<SuggestActionModel>();
-    IEnumerable<SuggestActionModel> filteredUserRequestItems
+    private List<SuggestActionModel> userRequestItems = new List<SuggestActionModel>();
+    private IEnumerable<SuggestActionModel> filteredUserRequestItems
     {
         get
         {
@@ -46,18 +47,15 @@ public partial class LastRequestsPage
             return filteredSource.Take(MAXIMUM_ITEMS_IN_PAGE);
         }
     }
-    List<SuggestActionModel> newItems = new List<SuggestActionModel>();
-    List<string> availableCategories = new List<string>();
-    System.Timers.Timer timer;
+    private List<SuggestActionModel> newItems = new List<SuggestActionModel>();
+    private List<string> availableCategories = new List<string>();
+    private System.Timers.Timer timer = new System.Timers.Timer((int)TimeSpan.FromSeconds(10).TotalMilliseconds);
 
-    [Parameter] public string Username { get; set; }
-    [CascadingParameter] public AuthenticationState AuthState { get; set; }
+    [Parameter] public Guid Id { get; set; }
 
     public string ContextUsername
     {
-        get => !string.IsNullOrWhiteSpace(Username) && (AuthState?.User.IsInRole("administrator") ?? false) ?
-            Username :
-            AuthState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? null;
+        get => (Id != Guid.Empty ? Id : loginerUser.Id).ToString();
     }
 
     string selectedFilterStatus = "Все";
@@ -95,19 +93,13 @@ public partial class LastRequestsPage
 
     protected override async Task OnInitializedAsync()
     {
-        timer = new System.Timers.Timer((int)TimeSpan.FromSeconds(3).TotalMilliseconds);
         timer.Elapsed += TimerTick;
         timer.Start();
-
-        await LoadData();
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        timer?.Stop();
-        userRequestItems.Clear();
         await LoadData();
-        timer?.Start();
     }
 
     private async void TimerTick(object sender, ElapsedEventArgs e)
@@ -131,6 +123,8 @@ public partial class LastRequestsPage
 
     private async Task LoadData()
     {
+        userRequestItems?.Clear();
+
         var data = await apiClient.SuggestActionsAllAsync(ContextUsername);
 
         userRequestItems = mapper.Map<IEnumerable<SuggestActionModel>>(data).ToList();
@@ -143,7 +137,7 @@ public partial class LastRequestsPage
         if (timer != null)
         {
             timer.Elapsed -= TimerTick;
-            timer.Dispose();
+            timer?.Dispose();
         }
     }
 }

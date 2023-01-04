@@ -11,10 +11,15 @@ public class AppUser
 
     [Required]
     [MinLength(8, ErrorMessage = "Длина пароля должна быть как минимум 8 символов")]
-    public string Password { get; set; }
+    public string? Password { get; set; } = String.Empty;
 
     [EmailAddress]
-    public string Email { get; set; }
+    public string? Email { get; set; }
+    public bool IsEmailConfirmed { get; set; }
 
-    public string Telegram { get; set; }
+    public string? Telegram { get; set; }
+    public bool IsTelegramConfirmed { get; set; }
+
+    public string? UserGroup { get; set; }
+
 }
