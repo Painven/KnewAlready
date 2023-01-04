@@ -1,6 +1,7 @@
 using KnewAlreadyAPI;
 using KnewAlreadyAPI.DataAccess;
 using KnewAlreadyAPI.Dtos;
+using KnewAlreadyAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ builder.Services.AddLogging();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<ISuggestActionRepository, SuggestActionRepository>();
 builder.Services.AddSingleton<ISuggestActionUserRepository, SuggestActionUserRepository>();
+builder.Services.AddSingleton<EmailVerifier>();
 builder.Services.AddSingleton<UserSuggestProcessor>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -9,12 +9,11 @@ namespace KnewAlreadyAPI;
 public interface ISuggestActionUserRepository
 {
     Task<UserDto[]> GetAll();
-    Task<Guid> GetUserIdByName(string username);
-    Task<string> GetUsernameByGuid(Guid guid);
     Task<bool> Create(CreateUserDto user);
     Task<bool> Update(UpdateUserDto user);
     Task<UserDto?> Login(string username, string password);
-    Task<UserDto?> GetUserInfo(Guid guid);
+    Task<UserDto?> GetUserInfo(Guid userId);
+    Task SetEmailVerificationCode(Guid userId, string? code);
 }
 
 public class SuggestActionUserRepository : ISuggestActionUserRepository
@@ -44,8 +43,17 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
             return false;
         }
 
+        bool newEmail = userEntity.Email != user.Email;
+
         userEntity.Email = user.Email;
         userEntity.Telegram = user.Telegram;
+
+        if (newEmail)
+        {
+            userEntity.EmailConfirmationCode = null;
+            userEntity.IsEmailConfirmed = false;
+        }
+
 
         var hasChanges = await db.SaveChangesAsync() > 0;
 
@@ -90,28 +98,6 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
         return Enumerable.Empty<UserDto>().ToArray();
     }
 
-    public async Task<Guid> GetUserIdByName(string username)
-    {
-        using var db = await dbFactory.CreateDbContextAsync();
-
-        var item = await db.Users.SingleOrDefaultAsync(u => u.Username == username);
-
-        if (item != null)
-        {
-            return item.Id;
-        }
-        return Guid.Empty;
-    }
-
-    public async Task<string> GetUsernameByGuid(Guid guid)
-    {
-        using var db = await dbFactory.CreateDbContextAsync();
-
-        var item = await db.Users.SingleOrDefaultAsync(u => u.Id == guid);
-
-        return item?.Username ?? string.Empty;
-    }
-
     public async Task<UserDto?> Login(string username, string password)
     {
         using var db = await dbFactory.CreateDbContextAsync();
@@ -137,5 +123,22 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
             return mapper.Map<UserDto>(existsUser);
         }
         return null;
+    }
+
+    public async Task SetEmailVerificationCode(Guid userId, string? code)
+    {
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var user = db.Users.FirstOrDefault(u => u.Id == userId);
+        if (user != null)
+        {
+            user.EmailConfirmationCode = code;
+            if (code == "OK")
+            {
+                user.IsEmailConfirmed = true;
+            }
+
+            await db.SaveChangesAsync();
+        }
     }
 }

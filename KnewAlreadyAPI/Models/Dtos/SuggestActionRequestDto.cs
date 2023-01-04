@@ -8,7 +8,7 @@ namespace KnewAlreadyAPI.Dtos;
 
 public record SuggestActionRequestDto
 {
-    public Guid UserId { get; init; }
+    public string SenderUsername { get; init; }
     public string TargetUsername { get; init; }
     public string CategoryName { get; init; }
     public int LifeTimeInMinutes { get; init; }

@@ -8,7 +8,13 @@
 
 <div class="container">
     <div class="profile-box">
-        <h1>Профиль</h1>
+        <h1>
+            Профиль
+            <button class="btn btn-lg btn-warning p-3 mt-3 d-nline" type="button" @onclick="Logout">
+                <span class="oi oi-account-logout"></span>
+            </button>
+        </h1>
+
         <div>
             <img src="/assets/images/user.png" />
             <label for="username">Имя пользователя</label>
@@ -18,22 +24,32 @@
             <img src="/assets/images/email.png" />
             <label for="email">Email</label>
             <input type="text" class="form-control" id="email" @bind="contextUser.Email" />
+            @if (!contextUser.IsEmailConfirmed)
+            {
+                <div class="add-info">
+                    @if (isEmailCodeSended)
+                    {
+                        <p>Код отправлен</p>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary d-inline" @onclick="SendEmailVerifyingCodeAsync">
+                            Email ящик не подтвержден!. Отправить код подтверждения
+                        </button>
+                    }
+                </div>
+            }
         </div>
         <div>
             <img src="/assets/images/telegram.png" />
             <label for="telegram">Telegram</label>
             <input type="text" class="form-control" id="telegram" @bind="contextUser.Telegram" />
+            <p>Адрес бота: <a href="https://t.me/painven_knewalready_bot" target="_blank">https://t.me/painven_knewalready_bot</a></p>
         </div>
         <div>
             <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="button" @onclick="SaveUserProfileChanges">
                 <span class="oi oi-check"></span>
                 Сохранить
-            </button>
-        </div>
-        <div>
-            <button class="btn btn-lg btn-warning p-3 mt-3 w-100" type="button" @onclick="Logout">
-                <span class="oi oi-account-logout"></span>
-                Выйти из аккаунта
             </button>
         </div>
     </div>
@@ -46,6 +62,7 @@
 
     [CascadingParameter] public AppUser loginedUser { get; set; }
     private AppUser contextUser = new AppUser();
+    private bool isEmailCodeSended;
 
     private async Task SaveUserProfileChanges()
     {
@@ -57,13 +74,7 @@
     {
         if (loginedUser != null)
         {
-            contextUser = new AppUser()
-                {
-                    Id = loginedUser.Id,
-                    Username = loginedUser.Username,
-                    Email = loginedUser.Email,
-                    Telegram = loginedUser.Telegram
-                };
+            contextUser = mapper.Map<AppUser>(loginedUser);
         }
     }
 
@@ -71,4 +82,10 @@
     {
         await ((CustomAuthProvider)authStateProvider).Logout();
     }
-}
+
+    private async Task SendEmailVerifyingCodeAsync()
+    {
+        await apiClient.SendEmailVirifyCodeAsync(loginedUser.Id.ToString());
+        isEmailCodeSended = true;
+    }
+    }

@@ -1,4 +1,5 @@
 ﻿using KnewAlreadyAPI.Dtos;
+using KnewAlreadyAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -9,12 +10,14 @@ namespace KnewAlreadyAPI.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ISuggestActionUserRepository userRepository;
+    private readonly EmailVerifier emailVerifier;
     private readonly ILogger<UserController> logger;
 
-    public UserController(ISuggestActionUserRepository userRepository, ILogger<UserController> logger)
+    public UserController(ISuggestActionUserRepository userRepository, ILogger<UserController> logger, EmailVerifier emailVerifier)
     {
         this.userRepository = userRepository;
         this.logger = logger;
+        this.emailVerifier = emailVerifier;
     }
 
     [HttpGet(Name = "GetAllUsers")]
@@ -66,5 +69,18 @@ public class UserController : ControllerBase
         var userDto = await userRepository.Login(userName, password);
 
         return userDto;
+    }
+
+    [HttpPost("send-email-verifying-code", Name = "SendEmailVirifyCode")]
+    public async Task SendEmailVirifyCode(string id)
+    {
+        await emailVerifier.SendCode(id);
+    }
+
+    [HttpPost("verify-email-code", Name = "VerifyUserEmail")]
+    public async Task<bool> VerifyUserEmail(string id, string code)
+    {
+        var result = await emailVerifier.VerifyCode(id, code);
+        return result;
     }
 }

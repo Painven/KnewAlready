@@ -1,0 +1,39 @@
+﻿@page "/email-verifying/{code}"
+
+@if (loginedUser?.IsEmailConfirmed ?? false)
+{
+    <h1>Email уже подтвержден</h1>
+}
+else if (virifyResult == null)
+{
+    <h3>Проверка данных</h3>
+    <LoadingSpinner />
+}
+else if (virifyResult == true)
+{
+    <h1>Email успешно подтвержден</h1>
+}
+else
+{
+    <h1>Ошибка</h1>
+}
+
+@code {
+
+    [Parameter] public string code { get; set; }
+    [CascadingParameter] public AppUser loginedUser { get; set; }
+    [Inject] public SuggestApiSwaggerClient apiClient { get; set; }
+
+    bool? virifyResult;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(code) && !string.IsNullOrWhiteSpace(loginedUser?.Id.ToString()))
+        {
+            virifyResult = null;
+            virifyResult = await apiClient.VerifyUserEmailAsync(loginedUser.Id.ToString(), code);
+            StateHasChanged();
+        }
+    }
+
+}

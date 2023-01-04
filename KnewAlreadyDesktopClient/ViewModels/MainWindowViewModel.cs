@@ -92,8 +92,8 @@ public class MainWindowViewModel : ViewModelBase
             var response = await apiClient.SuggestActionsAsync(new SuggestActionRequestDto()
             {
                 CategoryName = SelectedCategory,
+                SenderUsername = SelectedSenderUser.Username,
                 TargetUsername = SelectedDestinationUser.Username,
-                UserId = Guid.Parse(SelectedSenderUser.ApiKey),
                 LifeTimeInMinutes = (int)TimeSpan.FromMinutes(5).TotalMinutes
             });
 

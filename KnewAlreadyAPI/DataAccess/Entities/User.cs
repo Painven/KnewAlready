@@ -24,4 +24,10 @@ public class User
 
     [Column("user_group")]
     public string? UserGroup { get; set; }
+
+    [Column("is_email_confirmed")]
+    public bool IsEmailConfirmed { get; set; }
+
+    [Column("email_confirmation_code")]
+    public string? EmailConfirmationCode { get; set; }
 }

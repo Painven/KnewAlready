@@ -18,8 +18,6 @@ public class AppUser
     public bool IsEmailConfirmed { get; set; }
 
     public string? Telegram { get; set; }
-    public bool IsTelegramConfirmed { get; set; }
-
     public string? UserGroup { get; set; }
 
 }

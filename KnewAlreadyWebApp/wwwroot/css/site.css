@@ -1,5 +1,15 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+.profile-box .add-info {
+    border-radius: 4px;
+    margin-top: 4px;
+    padding: 8px;
+    font-weight: bold;
+    color: white;
+    background: orange;
+}
+
+
 .profile-box {
     display: flex;
     flex-direction: column;
@@ -10,7 +20,7 @@
 
     .profile-box > div {
         flex: 1 0 auto;
-        width: 300px;
+        width: 600px;
     }
 
     .profile-box img {

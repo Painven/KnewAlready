@@ -15,17 +15,16 @@ public class UserSuggestProcessor
 
     public async Task<SuggestActionItemDto> ProcessRequest(SuggestActionRequestDto request)
     {
+        throw new NotImplementedException();
 
+        /*
         IEnumerable<SuggestActionItemDto> data = await suggestRepository.GetAll();
-        string senderUsername = await userRepository.GetUsernameByGuid(request.UserId);
-        Guid targetGuid = await userRepository.GetUserIdByName(request.TargetUsername);
         DateTime now = DateTime.Now;
 
-        if (request.LifeTimeInMinutes == default)
+        if (request.LifeTimeInMinutes == default || request.LifeTimeInMinutes >= (int)TimeSpan.FromDays(1).TotalMinutes)
         {
             throw new ArgumentOutOfRangeException(nameof(request.LifeTimeInMinutes));
         }
-
 
         IEnumerable<SuggestActionItemDto> validItems = data
             .Where(i => !i.IsConfirmed &&
@@ -49,7 +48,7 @@ public class UserSuggestProcessor
             var waitingToSuggestItem = new SuggestActionItemDto()
             {
                 InitiatorUserId = request.UserId,
-                InitiatorUsername = senderUsername,
+                InitiatorUsername = request.SenderUsername,
                 AcceptorUserId = targetGuid,
                 AcceptorUsername = request.TargetUsername,
 
@@ -65,7 +64,7 @@ public class UserSuggestProcessor
         }
 
         return null;
-
+        */
     }
 
 }
