@@ -49,7 +49,7 @@ public class UserSuggestProcessor
 
             foreach (var provider in notifyProviders)
             {
-                provider.NotifyBothUsers(createdItem);
+                await provider.NotifyBothUsers(createdItem);
             }
 
             return createdItem;
@@ -79,6 +79,14 @@ public class UserSuggestProcessor
 
     public async Task<SuggestActionItemDto?> AcceptRequest(Guid acceptorId, Guid itemId)
     {
-        return await suggestRepository.AcceptItem(acceptorId, itemId);
+        var result = await suggestRepository.AcceptItem(acceptorId, itemId);
+        if (result != null)
+        {
+            foreach (var provider in notifyProviders)
+            {
+                await provider.NotifyBothUsers(result);
+            }
+        }
+        return result;
     }
 }

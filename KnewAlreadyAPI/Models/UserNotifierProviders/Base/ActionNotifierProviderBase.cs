@@ -17,7 +17,7 @@ public abstract class ActionNotifierProviderBase : IActionNotifierProvider
     protected async Task SendNotifyMessageToBothUsers(SuggestActionItemDto data)
     {
         var initiatorUser = await userRepository.GetUserInfo(data.InitiatorUsername);
-        var acceptorUser = await userRepository.GetUserInfo(data.InitiatorUsername);
+        var acceptorUser = await userRepository.GetUserInfo(data.AcceptorUsername);
 
         await NotifyUser(initiatorUser);
         await NotifyUser(acceptorUser);
