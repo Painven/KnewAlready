@@ -18,7 +18,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<JwtTokenValidator>();
 
-builder.Services.AddSingleton<HttpClient>(x => new HttpClient(new HttpClientHandler()));
+builder.Services.AddScoped<HttpClient>(x => new HttpClient(new HttpClientHandler()));
 builder.Services.AddScoped<SuggestApiSwaggerClient>(x => new SuggestApiSwaggerClient(apiHost, x.GetService<HttpClient>()));
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 

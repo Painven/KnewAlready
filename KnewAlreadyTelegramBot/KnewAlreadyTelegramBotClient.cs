@@ -14,7 +14,7 @@ public class KnewAlreadyTelegramBotClient
 
     public async Task NotifyBotUser(string userTelegramName, string message)
     {
-        var dataa = await client.GetMeAsync();
+        var data = await client.GetMeAsync();
         //await client.SendTextMessageAsync();
     }
 }

@@ -30,8 +30,8 @@ public class JwtTokenGenerator
             claims: new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.UserGroup),
+                new Claim(ClaimTypes.Email, user?.Email ?? string.Empty),
+                new Claim(ClaimTypes.Role, user?.UserGroup ?? string.Empty),
                 new Claim("UserId", user.Id.ToString()),
             },
             expires: DateTime.Now.AddMonths(1),

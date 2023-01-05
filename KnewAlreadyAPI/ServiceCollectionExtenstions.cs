@@ -26,7 +26,7 @@ public static class ServiceCollectionExtenstions
 
         var telegramBotToken = configuration
          .GetValue<string>("TelegramNotifierProviderConfiguration:ApiKey");
-        services.AddSingleton<KnewAlreadyTelegramBotClient>(x => new KnewAlreadyTelegramBotClient(telegramBotToken));
+        services.AddSingleton(x => new KnewAlreadyTelegramBotClient(telegramBotToken));
         services.AddTransient<IActionNotifierProvider, TelegramActionNotifierProvider>();
     }
 }

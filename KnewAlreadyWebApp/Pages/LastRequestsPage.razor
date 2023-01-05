@@ -70,9 +70,29 @@
                 </div>
                 <h3>@item.CategoryName</h3>
                 <div class="suggest-action-item-inner">
-                    <p>@item.InitiatorUsername</p>
+                    @if (item.InitiatorUsername != loginerUser?.Username)
+                    {
+                        <p>@item.InitiatorUsername</p>
+                    }
+                    else if (!item.IsConfirmed && !item.IsExpired)
+                    {
+                        <button class="btn btn-sm btn-success px-2">
+                            <span class="oi oi-circle-check"></span>
+                            Принять
+                        </button>
+                    }
                     <span class=@("fa " + getItemStatusIconClass(item))></span>
-                    <p>@item.AcceptorUsername</p>
+                    @if (item.AcceptorUsername != loginerUser?.Username)
+                    {
+                        <p>@item.AcceptorUsername</p>
+                    }
+                    else if (!item.IsConfirmed && !item.IsExpired)
+                    {
+                        <button class="btn btn-sm btn-success px-2">
+                            <span class="oi oi-circle-check"></span>
+                            Принять
+                        </button>
+                    }
                 </div>
             </div>
         }
