@@ -53,11 +53,6 @@ public partial class LastRequestsPage
 
     [Parameter] public Guid Id { get; set; }
 
-    public string ContextUsername
-    {
-        get => (Id != Guid.Empty ? Id : (loginerUser?.Id ?? Guid.Empty)).ToString();
-    }
-
     string selectedFilterStatus = "Все";
     string selectedFilterCategory = "Все";
 
@@ -104,6 +99,8 @@ public partial class LastRequestsPage
 
     private async void TimerTick(object sender, ElapsedEventArgs e)
     {
+        timer.Stop();
+
         List<SuggestActionModel> tempItems = userRequestItems;
 
         await LoadData();
@@ -111,7 +108,7 @@ public partial class LastRequestsPage
         newItems.Clear();
         foreach (var item in userRequestItems)
         {
-            var alreadyAddedItem = tempItems.FirstOrDefault(i => i.Guid == item.Guid);
+            var alreadyAddedItem = tempItems.FirstOrDefault(i => i.Id == item.Id);
             if (alreadyAddedItem == null || alreadyAddedItem.IsConfirmed != item.IsConfirmed)
             {
                 newItems.Add(item);
@@ -119,6 +116,7 @@ public partial class LastRequestsPage
         }
 
         await InvokeAsync(StateHasChanged);
+        timer.Start();
     }
 
     private async Task LoadData()
@@ -130,6 +128,13 @@ public partial class LastRequestsPage
         userRequestItems = mapper.Map<IEnumerable<SuggestActionModel>>(data).ToList();
 
         availableCategories = data.GroupBy(d => d.CategoryName).Select(g => g.Key).ToList();
+    }
+
+    private async Task AcceptClick(Guid itemId)
+    {
+        await apiClient.AcceptActionAsync(itemId);
+        await LoadData();
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

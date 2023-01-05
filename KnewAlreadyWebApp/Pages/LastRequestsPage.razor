@@ -1,5 +1,4 @@
 ﻿@page "/last-requests"
-@page "/last-requests/user/{Id}"
 @attribute [Authorize]
 
 @implements IDisposable
@@ -70,25 +69,25 @@
                 </div>
                 <h3>@item.CategoryName</h3>
                 <div class="suggest-action-item-inner">
-                    @if (item.InitiatorUsername != loginerUser?.Username)
+                    @if (item.IsConfirmed || item.InitiatorUsername != loginerUser?.Username)
                     {
                         <p>@item.InitiatorUsername</p>
                     }
-                    else if (!item.IsConfirmed && !item.IsExpired)
+                    else if (!item.IsConfirmed && !item.IsExpired && item.InitiatorUsername != loginerUser?.Username)
                     {
-                        <button class="btn btn-sm btn-success px-2">
+                        <button class="btn btn-success px-2 blink" @onclick="@(e => AcceptClick(item.Id))">
                             <span class="oi oi-circle-check"></span>
                             Принять
                         </button>
                     }
                     <span class=@("fa " + getItemStatusIconClass(item))></span>
-                    @if (item.AcceptorUsername != loginerUser?.Username)
+                    @if (item.IsConfirmed || item.AcceptorUsername != loginerUser?.Username)
                     {
                         <p>@item.AcceptorUsername</p>
                     }
-                    else if (!item.IsConfirmed && !item.IsExpired)
+                    else if (!item.IsConfirmed && !item.IsExpired && item.InitiatorUsername != loginerUser?.Username)
                     {
-                        <button class="btn btn-sm btn-success px-2">
+                        <button class="btn btn-success px-2 blink" @onclick="@(e => AcceptClick(item.Id))">
                             <span class="oi oi-circle-check"></span>
                             Принять
                         </button>

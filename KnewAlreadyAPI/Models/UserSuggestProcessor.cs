@@ -77,4 +77,8 @@ public class UserSuggestProcessor
         return new();
     }
 
+    public async Task<SuggestActionItemDto?> AcceptRequest(Guid acceptorId, Guid itemId)
+    {
+        return await suggestRepository.AcceptItem(acceptorId, itemId);
+    }
 }

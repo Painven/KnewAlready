@@ -11,6 +11,7 @@ public interface ISuggestActionRepository
     Task<SuggestActionItemDto?> CreateOrSuggest(SuggestActionItemDto item);
     Task<SuggestActionItemDto[]> GetAllActiveRecordsBetweenUsers(Guid user1, Guid user2, string categoryName);
     Task<SuggestActionItemDto[]> GetAllItemsForUser(Guid userId);
+    Task<SuggestActionItemDto?> AcceptItem(Guid acceptorId, Guid itemId);
 }
 
 public class SuggestActionRepository : ISuggestActionRepository
@@ -96,4 +97,22 @@ public class SuggestActionRepository : ISuggestActionRepository
         return data.ToArray();
     }
 
+    public async Task<SuggestActionItemDto> AcceptItem(Guid acceptorId, Guid itemId)
+    {
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var existItem = db.SuggestActionItems
+            .FirstOrDefault(i => i.Id == itemId && i.AcceptorUserId == acceptorId);
+
+        if (existItem != null)
+        {
+            existItem.ConfirmDateTime = DateTime.Now;
+            existItem.IsConfirmed = true;
+
+            await db.SaveChangesAsync();
+
+            return mapper.Map<SuggestActionItemDto>(existItem);
+        }
+        return null;
+    }
 }

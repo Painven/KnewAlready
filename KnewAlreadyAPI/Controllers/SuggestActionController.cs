@@ -60,4 +60,24 @@ public class SuggestActionController : ControllerBase
             return new SuggestActionResponseDto() { Id = item.Id, Status = "Создано" };
         }
     }
+
+    [HttpPost("accept", Name = "AcceptAction")]
+    public async Task<bool> AcceptAction(Guid itemId)
+    {
+        var claims = HttpContext.User.Identity as ClaimsIdentity;
+
+        if (!Guid.TryParse(claims?.FindFirst("UserId")?.Value, out var userId))
+        {
+            return false;
+        }
+
+        var result = await processor.AcceptRequest(userId, itemId);
+        if (result != null)
+        {
+            return result.IsConfirmed;
+        }
+
+
+        return false;
+    }
 }

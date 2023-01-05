@@ -88,7 +88,6 @@
     }
 
     .suggest-action-item-inner > span {
-        flex: 1 0 auto;
         text-align: center;
         font-size: 32px;
         color: #e0e0ff;
