@@ -1,14 +1,15 @@
 using KnewAlreadyAPI.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace KnewAlreadyAPI.Controllers;
 
 [ApiController]
-[Route("api/suggest-actions")]
 [Authorize]
+[Route("api/suggest-actions")]
 public class SuggestActionController : ControllerBase
 {
     private readonly UserSuggestProcessor processor;
@@ -24,35 +25,39 @@ public class SuggestActionController : ControllerBase
         this.logger = logger;
     }
 
-    [HttpGet, Authorize(Roles = "administrator")]
-    public async Task<IEnumerable<SuggestActionItemDto>> GetAll(string? forUser = null)
+    [HttpGet]
+    public async Task<IEnumerable<SuggestActionItemDto>> GetAll()
     {
-        logger.LogInformation($"Вызов GetAll forUser='{forUser ?? String.Empty}'");
+        var claims = HttpContext.User.Identity as ClaimsIdentity;
 
-        var data = await suggestRepository.GetAll(forUser);
-        return data;
+        if (Guid.TryParse(claims?.FindFirst("UserId")?.Value, out Guid userId))
+        {
+            var data = await suggestRepository.GetAllItemsForUser(userId);
+            return data;
+        }
+
+        return Enumerable.Empty<SuggestActionItemDto>();
     }
 
-    [HttpPost, Authorize]
+    [HttpPost]
     public async Task<SuggestActionResponseDto> Send([FromBody] SuggestActionRequestDto data)
     {
-        logger.LogInformation($"Вызов Send data='{JsonSerializer.Serialize(data)}'");
+        var claims = HttpContext.User.Identity as ClaimsIdentity;
+        string senderUsername = claims?.Name;
 
-        var item = await processor.ProcessRequest(data);
+        var item = await processor.ProcessRequest(senderUsername, data);
 
-        if (item == null)
+        if (item.Id == Guid.Empty)
         {
-            return new SuggestActionResponseDto() { Id = Guid.Empty, Status = "AlreadyHasActiveItemInThatTimeRange" };
+            return new SuggestActionResponseDto() { Id = Guid.Empty, Status = "Ошибка составления запроса" };
         }
         else if (item.IsConfirmed)
         {
-            return new SuggestActionResponseDto() { Id = item.Id, Status = "Accepted" };
+            return new SuggestActionResponseDto() { Id = item.Id, Status = "Принято" };
         }
-        else if (!item.IsConfirmed)
+        else
         {
-            return new SuggestActionResponseDto() { Id = item.Id, Status = "Created" };
+            return new SuggestActionResponseDto() { Id = item.Id, Status = "Создано" };
         }
-
-        throw new ArgumentOutOfRangeException(nameof(data));
     }
 }

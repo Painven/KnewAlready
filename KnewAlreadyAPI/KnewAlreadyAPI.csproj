@@ -22,6 +22,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\KnewAlreadyCore\KnewAlreadyCore.csproj" />
+		<ProjectReference Include="..\KnewAlreadyTelegramBot\KnewAlreadyTelegramBot.csproj" />
 	</ItemGroup>
 
 </Project>

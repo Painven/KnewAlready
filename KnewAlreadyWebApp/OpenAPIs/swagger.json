@@ -10,15 +10,6 @@
         "tags": [
           "SuggestAction"
         ],
-        "parameters": [
-          {
-            "name": "forUser",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -435,10 +426,6 @@
       "SuggestActionRequestDto": {
         "type": "object",
         "properties": {
-          "senderUsername": {
-            "type": "string",
-            "nullable": true
-          },
           "targetUsername": {
             "type": "string",
             "nullable": true
@@ -524,8 +511,7 @@
       "Bearer": {
         "type": "http",
         "description": "Please enter a valid token",
-        "scheme": "Bearer",
-        "bearerFormat": "JWT"
+        "scheme": "Bearer"
       }
     }
   },

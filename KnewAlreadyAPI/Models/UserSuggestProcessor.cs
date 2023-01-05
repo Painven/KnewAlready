@@ -1,4 +1,5 @@
 ﻿using KnewAlreadyAPI.Dtos;
+using KnewAlreadyAPI.Models;
 
 namespace KnewAlreadyAPI;
 
@@ -6,49 +7,60 @@ public class UserSuggestProcessor
 {
     private readonly ISuggestActionRepository suggestRepository;
     private readonly ISuggestActionUserRepository userRepository;
+    private readonly IEnumerable<IActionNotifierProvider> notifyProviders;
 
-    public UserSuggestProcessor(ISuggestActionRepository suggestRepository, ISuggestActionUserRepository userRepository)
+    public UserSuggestProcessor(ISuggestActionRepository suggestRepository,
+        ISuggestActionUserRepository userRepository,
+        IEnumerable<IActionNotifierProvider> notifyProviders)
     {
         this.suggestRepository = suggestRepository;
         this.userRepository = userRepository;
+        this.notifyProviders = notifyProviders;
     }
 
-    public async Task<SuggestActionItemDto> ProcessRequest(SuggestActionRequestDto request)
+    public async Task<SuggestActionItemDto> ProcessRequest(string senderUsername, SuggestActionRequestDto request)
     {
-        throw new NotImplementedException();
-        /*
-        IEnumerable<SuggestActionItemDto> data = await suggestRepository.GetAll();
-        DateTime now = DateTime.Now;
-
-        if (request.LifeTimeInMinutes == default || request.LifeTimeInMinutes >= (int)TimeSpan.FromDays(1).TotalMinutes)
+        bool badTimeLimit = request.LifeTimeInMinutes < 5 || request.LifeTimeInMinutes >= (int)TimeSpan.FromDays(1).TotalMinutes;
+        if (badTimeLimit)
         {
-            throw new ArgumentOutOfRangeException(nameof(request.LifeTimeInMinutes));
+            return new();
         }
 
-        IEnumerable<SuggestActionItemDto> validItems = data
-            .Where(i => !i.IsConfirmed &&
-                i.CategoryName == request.CategoryName &&
-                (i.AcceptorUserId == request.UserId || i.InitiatorUserId == request.UserId) &&
-                (i.InitiatorUserId == targetGuid || i.AcceptorUserId == targetGuid))
-            .OrderByDescending(i => i.Created)
-            .AsEnumerable();
+        UserDto senderUser = await userRepository.GetUserInfo(senderUsername);
+        UserDto targetUser = await userRepository.GetUserInfo(request?.TargetUsername);
 
-        SuggestActionItemDto? activeItem = validItems
+        bool badUsersInfo = senderUser == null || targetUser == null || senderUser == targetUser;
+        if (badUsersInfo)
+        {
+            return new();
+        }
+
+        IEnumerable<SuggestActionItemDto> data = await suggestRepository
+            .GetAllActiveRecordsBetweenUsers(senderUser.Id, targetUser.Id, request.CategoryName);
+        DateTime now = DateTime.Now;
+
+        SuggestActionItemDto? activeItem = data
             .Where(i => i.Created.AddMinutes(i.LifeTimeInMinutes) > now)
             .FirstOrDefault();
 
-        if (activeItem != null && activeItem.InitiatorUserId == targetGuid)
+        if (activeItem != null && activeItem.InitiatorUserId == targetUser.Id)
         {
             var createdItem = await suggestRepository.CreateOrSuggest(activeItem);
+
+            foreach (var provider in notifyProviders)
+            {
+                provider.NotifyBothUsers(createdItem);
+            }
+
             return createdItem;
         }
         else if (activeItem == null)
         {
             var waitingToSuggestItem = new SuggestActionItemDto()
             {
-                InitiatorUserId = request.UserId,
-                InitiatorUsername = request.SenderUsername,
-                AcceptorUserId = targetGuid,
+                InitiatorUserId = senderUser.Id,
+                InitiatorUsername = senderUsername,
+                AcceptorUserId = targetUser.Id,
                 AcceptorUsername = request.TargetUsername,
 
                 CategoryName = request.CategoryName,
@@ -62,8 +74,7 @@ public class UserSuggestProcessor
             return createdItem;
         }
 
-        return null;
-        */
+        return new();
     }
 
 }

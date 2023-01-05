@@ -1,0 +1,76 @@
+﻿@page "/send-request"
+<PageTitle>Отправить запрос другому пользователю</PageTitle>
+
+<div class="suggest-action-tool-panel my-2">
+    <div>
+        <label for="target_user">Кому</label>
+        <input type="text" class="form-control" id="target_user" @bind="targetUsername" />
+    </div>
+    <div>
+        <label for="category">Категория</label>
+        <input type="text" class="form-control" id="category" @bind="categoryName" />
+    </div>
+    <div>
+        <label for="time_limit">Максимальное ожидание, мин.</label>
+        <input type="number" min="5" max="1439" class="form-control" id="time_limit" @bind="lifeTimeInMinutes" />
+    </div>
+    <div>
+        <button class="btn btn-success btn-lg w-100 my-2" @onclick="Send" disabled="@isSendButtonDisabled">
+            <span class="oi oi-check"></span>
+            Отправить
+        </button>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Ошибка!</strong> @errorMessage
+        </div>
+    }
+</div>
+
+@code {
+    private string targetUsername = "";
+    private string categoryName = "";
+    private int lifeTimeInMinutes = 5;
+    private bool isSendInProgress = false;
+    private string? errorMessage = null;
+
+    [CascadingParameter] public AppUser loginedUser { get; set; }
+    [Inject] public SuggestApiSwaggerClient apiClient { get; set; }
+    [Inject] public NavigationManager navManager { get; set; }
+
+    bool isSendButtonDisabled
+    {
+        get => isSendInProgress || (string.IsNullOrWhiteSpace(targetUsername) || string.IsNullOrWhiteSpace(categoryName) || lifeTimeInMinutes < 5);
+    }
+
+    private async Task Send()
+    {
+        isSendInProgress = true;
+        errorMessage = null;
+
+        try
+        {
+            var result = await apiClient.SuggestActionsAsync(new SuggestActionRequestDto()
+                {
+                    TargetUsername = targetUsername,
+                    CategoryName = categoryName,
+                    LifeTimeInMinutes = lifeTimeInMinutes
+                });
+
+            if (result.Id != Guid.Empty)
+            {
+                navManager.NavigateTo("/last-requests");
+            }
+            else
+            {
+                errorMessage = result.Status;
+            }
+        }
+        finally
+        {
+            isSendInProgress = false;
+        }
+
+    }
+}

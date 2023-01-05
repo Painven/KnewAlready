@@ -31,8 +31,8 @@ public class JwtTokenGenerator
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Sid, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.UserGroup),
+                new Claim("UserId", user.Id.ToString()),
             },
             expires: DateTime.Now.AddMonths(1),
             signingCredentials: signinCredentials
@@ -40,5 +40,12 @@ public class JwtTokenGenerator
         string token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
         return token;
+    }
+
+    public IEnumerable<Claim> GetTokenClaims(string jwtToken)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var securityToken = (JwtSecurityToken)tokenHandler.ReadToken(jwtToken);
+        return securityToken.Claims;
     }
 }

@@ -8,8 +8,10 @@ using System.Security.Claims;
 using System.Text.Json;
 
 namespace KnewAlreadyAPI.Controllers;
-[Route("api/user")]
+
 [ApiController]
+[Authorize]
+[Route("api/user")]
 public class UserController : ControllerBase
 {
     private readonly ISuggestActionUserRepository userRepository;
@@ -36,72 +38,71 @@ public class UserController : ControllerBase
         return users;
     }
 
-    [HttpGet(Name = "GetUserInfo"), Authorize]
+    [HttpGet(Name = "GetUserInfo")]
     public async Task<UserDto?> GetUserInfo()
     {
         var claims = HttpContext.User.Identity as ClaimsIdentity;
 
-        if (Guid.TryParse(claims?.FindFirst("sid")?.Value, out Guid userId))
+        if (Guid.TryParse(claims?.FindFirst("UserId")?.Value, out Guid id))
         {
-            var result = await userRepository.GetUserInfo(userId);
+            var result = await userRepository.GetUserInfo(id);
             return result;
         }
 
         return null;
     }
 
+    [AllowAnonymous]
     [HttpPost(Name = "CreateUser")]
-    public async Task<bool> CreateUser(CreateUserDto user)
+    public async Task<bool> CreateUser([FromBody] CreateUserDto user)
     {
         var result = await userRepository.Create(user);
 
         return result;
     }
 
-    [HttpPut(Name = "UpdateProfile"), Authorize]
-    public async Task<bool> UpdateProfile(UpdateUserDto user)
+    [HttpPut(Name = "UpdateProfile")]
+    public async Task<bool> UpdateProfile([FromBody] UpdateUserDto user)
     {
         var result = await userRepository.Update(user);
 
         return result;
     }
 
+    [AllowAnonymous]
     [HttpPost("login", Name = "LoginUser")]
-    public async Task<ApiToken> LoginUser(string userName, string password)
+    public async Task<ActionResult<ApiToken>> LoginUser(string userName, string password)
     {
         var user = await userRepository.Login(userName, password);
 
         if (user != null)
         {
             var token = tokenGenerator.GenerateJwtSecurityToken(user);
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                return new ApiToken(token);
-            }
+            return Ok(new ApiToken(token));
         }
-        return ApiToken.Empty;
+
+        return BadRequest(ApiToken.Empty);
     }
 
-    [HttpPost("send-email-verifying-code", Name = "SendEmailVirifyCode"), Authorize]
+    [HttpPost("send-email-verifying-code", Name = "SendEmailVirifyCode")]
     public async Task SendEmailVirifyCode()
     {
         var claims = HttpContext.User.Identity as ClaimsIdentity;
 
-        if (Guid.TryParse(claims?.FindFirst("sid")?.Value, out Guid userId))
+        if (Guid.TryParse(claims?.FindFirst("UserId")?.Value, out Guid id))
         {
-            await emailVerifier.SendCode(userId);
+            await emailVerifier.SendCode(id);
         }
     }
 
-    [HttpPost("verify-email-code", Name = "VerifyUserEmail"), Authorize]
+    [HttpPost("verify-email-code", Name = "VerifyUserEmail")]
     public async Task<bool> VerifyUserEmail(string code)
     {
         var claims = HttpContext.User.Identity as ClaimsIdentity;
 
-        if (Guid.TryParse(claims?.FindFirst("sid")?.Value, out Guid userId))
+        if (Guid.TryParse(claims?.FindFirst("UserId")?.Value, out Guid id))
         {
-            var result = await emailVerifier.VerifyCode(userId, code);
+            var result = await emailVerifier.VerifyCode(id, code);
             return result;
         }
         return false;

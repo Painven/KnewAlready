@@ -55,7 +55,7 @@ public partial class LastRequestsPage
 
     public string ContextUsername
     {
-        get => (Id != Guid.Empty ? Id : loginerUser.Id).ToString();
+        get => (Id != Guid.Empty ? Id : (loginerUser?.Id ?? Guid.Empty)).ToString();
     }
 
     string selectedFilterStatus = "Все";
@@ -125,7 +125,7 @@ public partial class LastRequestsPage
     {
         userRequestItems?.Clear();
 
-        var data = await apiClient.SuggestActionsAllAsync(ContextUsername);
+        var data = await apiClient.SuggestActionsAllAsync();
 
         userRequestItems = mapper.Map<IEnumerable<SuggestActionModel>>(data).ToList();
 

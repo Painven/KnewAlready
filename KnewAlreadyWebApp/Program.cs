@@ -7,7 +7,7 @@ using Microsoft.Net.Http.Headers;
 var builder = WebApplication.CreateBuilder(args);
 
 #if DEBUG
-string apiHost = "http://localhost:5052/";
+string apiHost = "https://localhost:7052/";
 #else
 string apiHost = "http://knewalready-api/";
 #endif
@@ -16,16 +16,9 @@ string apiHost = "http://knewalready-api/";
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
-builder.Services.AddHttpClient("KnewAlreadyAPI", httpClient =>
-{
-    httpClient.BaseAddress = new Uri(apiHost);
-    httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-});
-
-
 builder.Services.AddSingleton<JwtTokenValidator>();
-builder.Services.AddScoped<HttpClient>();
+
+builder.Services.AddSingleton<HttpClient>(x => new HttpClient(new HttpClientHandler()));
 builder.Services.AddScoped<SuggestApiSwaggerClient>(x => new SuggestApiSwaggerClient(apiHost, x.GetService<HttpClient>()));
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 

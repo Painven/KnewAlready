@@ -13,6 +13,7 @@ public interface ISuggestActionUserRepository
     Task<bool> Update(UpdateUserDto user);
     Task<User> Login(string username, string password);
     Task<UserDto?> GetUserInfo(Guid userId);
+    Task<UserDto?> GetUserInfo(string? username);
     Task SetEmailVerificationCode(Guid userId, string? code);
 }
 
@@ -117,6 +118,24 @@ public class SuggestActionUserRepository : ISuggestActionUserRepository
         using var db = await dbFactory.CreateDbContextAsync();
 
         var existsUser = db.Users.FirstOrDefault(u => u.Id == guid);
+
+        if (existsUser != null)
+        {
+            return mapper.Map<UserDto>(existsUser);
+        }
+        return null;
+    }
+
+    public async Task<UserDto?> GetUserInfo(string? userName)
+    {
+        if (string.IsNullOrWhiteSpace(userName))
+        {
+            return null;
+        }
+
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var existsUser = db.Users.FirstOrDefault(u => u.Username == userName);
 
         if (existsUser != null)
         {

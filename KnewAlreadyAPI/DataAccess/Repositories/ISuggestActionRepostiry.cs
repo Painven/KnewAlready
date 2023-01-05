@@ -8,8 +8,9 @@ namespace KnewAlreadyAPI;
 
 public interface ISuggestActionRepository
 {
-    Task<SuggestActionItemDto[]> GetAll(string? forUser = null);
     Task<SuggestActionItemDto?> CreateOrSuggest(SuggestActionItemDto item);
+    Task<SuggestActionItemDto[]> GetAllActiveRecordsBetweenUsers(Guid user1, Guid user2, string categoryName);
+    Task<SuggestActionItemDto[]> GetAllItemsForUser(Guid userId);
 }
 
 public class SuggestActionRepository : ISuggestActionRepository
@@ -54,17 +55,45 @@ public class SuggestActionRepository : ISuggestActionRepository
         }
     }
 
-    public async Task<SuggestActionItemDto[]> GetAll(string? forUser = null)
+    public async Task<SuggestActionItemDto[]> GetAllItemsForUser(Guid userId)
     {
+        if (userId == Guid.Empty)
+        {
+            return null;
+        }
+
         using var db = await dbFactory.CreateDbContextAsync();
 
         var source = db.SuggestActionItems
-            .Where(item => forUser == null ? true : item.InitiatorUsername == forUser)
+            .Where(item => item.InitiatorUserId == userId || item.AcceptorUserId == userId)
             .OrderByDescending(item => item.Created)
+            .Take(100)
             .ToArray();
 
         var data = mapper.Map<IEnumerable<SuggestActionItemDto>>(source);
 
         return data.ToArray();
     }
+
+    public async Task<SuggestActionItemDto[]> GetAllActiveRecordsBetweenUsers(Guid user1, Guid user2, string categoryName)
+    {
+        if (user1 == Guid.Empty || user2 == Guid.Empty)
+        {
+            return null;
+        }
+
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var source = db.SuggestActionItems
+            .Where(item => (item.InitiatorUserId == user1 && item.AcceptorUserId == user2) || item.InitiatorUserId == user2 && item.AcceptorUserId == user1)
+            .Where(item => !item.IsConfirmed && item.CategoryName == categoryName)
+            .OrderByDescending(item => item.Created)
+            .Take(100)
+            .ToArray();
+
+        var data = mapper.Map<IEnumerable<SuggestActionItemDto>>(source);
+
+        return data.ToArray();
+    }
+
 }

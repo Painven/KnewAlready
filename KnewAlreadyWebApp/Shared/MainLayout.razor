@@ -41,7 +41,6 @@
     protected override async Task OnInitializedAsync()
     {
         authStateProvider.AuthenticationStateChanged += ChangeLoginedUser;
-        await authStateProvider.GetAuthenticationStateAsync();
     }
 
     private async void ChangeLoginedUser(Task<AuthenticationState> authState)
@@ -49,8 +48,16 @@
         var state = await authState;
         if (state?.User?.Identity?.Name != "anonymous")
         {
-            var userDto = await apiClient.GetUserInfoAsync();
-            loginedUser = mapper.Map<AppUser>(userDto);
+            try
+            {
+
+                var userDto = await apiClient.GetUserInfoAsync();
+                loginedUser = mapper.Map<AppUser>(userDto);
+            }
+            catch (Exception ex)
+            {
+
+            }
             await InvokeAsync(StateHasChanged);
         }
     }

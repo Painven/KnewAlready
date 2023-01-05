@@ -9,7 +9,7 @@
 
 <PageTitle>Запросы</PageTitle>
 
-<h2>Запросы пользователя: <strong>@ContextUsername</strong></h2>
+<h2>Запросы пользователя: <strong>@(loginerUser?.Username ?? string.Empty)</strong></h2>
 
 <div class="suggest-action-tool-panel my-2">
     <div class="d-inline">
