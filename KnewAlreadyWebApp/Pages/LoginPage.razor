@@ -18,10 +18,14 @@
     <div>
         <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="submit" @onclick="LoginUser" disabled="@LoginButtonDisabled">
             <span class="oi oi-check"></span>
-            Войти
             @if (isLoginInProgress)
             {
+                <span>Вход</span>
                 <LoadingSpinner />
+            }
+            else
+            {
+                <span>Войти</span>
             }
         </button>
         @if (hasErrors)

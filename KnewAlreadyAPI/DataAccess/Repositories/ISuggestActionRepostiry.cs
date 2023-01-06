@@ -11,6 +11,7 @@ public interface ISuggestActionRepository
     Task<SuggestActionItemDto?> CreateOrSuggest(SuggestActionItemDto item);
     Task<SuggestActionItemDto[]> GetAllActiveRecordsBetweenUsers(Guid user1, Guid user2, string categoryName);
     Task<SuggestActionItemDto[]> GetAllItemsForUser(Guid userId);
+    Task<bool> HasNewItemsForUserStartedAfterDate(Guid userId, DateTime dt);
     Task<SuggestActionItemDto?> AcceptItem(Guid acceptorId, Guid itemId);
 }
 
@@ -114,5 +115,16 @@ public class SuggestActionRepository : ISuggestActionRepository
             return mapper.Map<SuggestActionItemDto>(existItem);
         }
         return null;
+    }
+
+    public async Task<bool> HasNewItemsForUserStartedAfterDate(Guid userId, DateTime dt)
+    {
+        using var db = await dbFactory.CreateDbContextAsync();
+
+        var newItem = db.SuggestActionItems
+            .Where(i => i.AcceptorUserId == userId && i.Created > dt)
+            .FirstOrDefault();
+
+        return newItem != null;
     }
 }

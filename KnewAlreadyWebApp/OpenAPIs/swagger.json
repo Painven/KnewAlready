@@ -129,6 +129,46 @@
         }
       }
     },
+    "/api/suggest-actions/has-updates": {
+      "get": {
+        "tags": [
+          "SuggestAction"
+        ],
+        "operationId": "HasNewItemsStartedAfterDate",
+        "parameters": [
+          {
+            "name": "dt",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/user/list": {
       "get": {
         "tags": [

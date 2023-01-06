@@ -80,4 +80,18 @@ public class SuggestActionController : ControllerBase
 
         return false;
     }
+
+    [HttpGet("has-updates", Name = "HasNewItemsStartedAfterDate")]
+    public async Task<bool> HasNewItemsStartedAfterDate(DateTime dt)
+    {
+        var claims = HttpContext.User.Identity as ClaimsIdentity;
+
+        if (!Guid.TryParse(claims?.FindFirst("UserId")?.Value, out var userId))
+        {
+            return false;
+        }
+
+        var hasUpdates = await suggestRepository.HasNewItemsForUserStartedAfterDate(userId, dt);
+        return hasUpdates;
+    }
 }

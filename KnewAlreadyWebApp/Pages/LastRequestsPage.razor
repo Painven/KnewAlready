@@ -8,45 +8,53 @@
 
 <PageTitle>Запросы</PageTitle>
 
-<h2>Запросы пользователя: <strong>@(loginerUser?.Username ?? string.Empty)</strong></h2>
+<h2>Запросы с вами в качестве участника</h2>
 
-<div class="suggest-action-tool-panel my-2">
-    <div class="d-inline">
-        <strong>Статус</strong>
-        <div class="btn-group" role="group">
-            <button class="btn p-2 @(selectedFilterStatus == "Все" ? "btn-success" : "btn-outline-success")"
+@if (userRequestItems == null || userRequestItems.Count == 0)
+{
+    <p>Пока нет ниодного запроса</p>
+    <p>Что бы создать новый запрос самому перейдите в раздел <a href="/send-request"><strong>Создать запрос</strong></a></p>
+}
+else
+{
+    <div class="suggest-action-tool-panel my-2">
+        <div class="d-inline">
+            <strong>Статус</strong>
+            <div class="btn-group" role="group">
+                <button class="btn p-2 @(selectedFilterStatus == "Все" ? "btn-success" : "btn-outline-success")"
                     @onclick="@(e => selectedFilterStatus = "Все")">
-                Все
-            </button>
-            <button class="btn p-2 @(selectedFilterStatus == "Только ожидающие" ? "btn-success" : "btn-outline-success")"
-                    @onclick="@(e => selectedFilterStatus = "Только ожидающие")">
-                Только ожидающие
-            </button>
-            <button class="btn p-2 @(selectedFilterStatus == "Только законченные" ? "btn-success" : "btn-outline-success")"
-                    @onclick="@(e => selectedFilterStatus = "Только законченные")">
-                Только законченные
-            </button>
-        </div>
-    </div>
-
-    <div class="d-inline">
-        <strong>Категории</strong>
-        <div class="btn-group" role="group">
-            <button class="btn p-2 @(selectedFilterCategory == "Все" ? "btn-success" : "btn-outline-success")"
-                    @onclick="@(e => selectedFilterCategory = "Все")">
-                Все
-            </button>
-            @foreach (var category in availableCategories)
-            {
-                <button class="btn p-2 @(selectedFilterCategory == category ? "btn-success" : "btn-outline-success")"
-                    @onclick="@(e => selectedFilterCategory = category)">
-                    @category
+                    Все
                 </button>
-            }
+                <button class="btn p-2 @(selectedFilterStatus == "Только ожидающие" ? "btn-success" : "btn-outline-success")"
+                    @onclick="@(e => selectedFilterStatus = "Только ожидающие")">
+                    Только ожидающие
+                </button>
+                <button class="btn p-2 @(selectedFilterStatus == "Только законченные" ? "btn-success" : "btn-outline-success")"
+                    @onclick="@(e => selectedFilterStatus = "Только законченные")">
+                    Только законченные
+                </button>
+            </div>
         </div>
-    </div>
 
-</div>
+        <div class="d-inline">
+            <strong>Категории</strong>
+            <div class="btn-group" role="group">
+                <button class="btn p-2 @(selectedFilterCategory == "Все" ? "btn-success" : "btn-outline-success")"
+                    @onclick="@(e => selectedFilterCategory = "Все")">
+                    Все
+                </button>
+                @foreach (var category in availableCategories)
+                {
+                    <button class="btn p-2 @(selectedFilterCategory == category ? "btn-success" : "btn-outline-success")"
+                    @onclick="@(e => selectedFilterCategory = category)">
+                        @category
+                    </button>
+                }
+            </div>
+        </div>
+
+    </div>
+}
 
 
 <div class="suggest-action-list">

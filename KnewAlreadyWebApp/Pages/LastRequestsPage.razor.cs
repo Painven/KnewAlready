@@ -103,31 +103,43 @@ public partial class LastRequestsPage
 
         List<SuggestActionModel> tempItems = userRequestItems;
 
-        await LoadData();
+        var hasUpdates = await LoadData();
 
         newItems.Clear();
-        foreach (var item in userRequestItems)
-        {
-            var alreadyAddedItem = tempItems.FirstOrDefault(i => i.Id == item.Id);
-            if (alreadyAddedItem == null || alreadyAddedItem.IsConfirmed != item.IsConfirmed)
-            {
-                newItems.Add(item);
-            }
-        }
 
-        await InvokeAsync(StateHasChanged);
+        if (hasUpdates)
+        {
+            foreach (var item in userRequestItems)
+            {
+                var alreadyAddedItem = tempItems.FirstOrDefault(i => i.Id == item.Id);
+                if (alreadyAddedItem == null || alreadyAddedItem.IsConfirmed != item.IsConfirmed)
+                {
+                    newItems.Add(item);
+                }
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
         timer.Start();
     }
 
-    private async Task LoadData()
+    private async Task<bool> LoadData()
     {
-        userRequestItems?.Clear();
+        bool hasUpdates = userRequestItems.Count == 0 || await apiClient.HasNewItemsStartedAfterDateAsync(userRequestItems.Max(i => i.Created));
+        if (hasUpdates)
+        {
+            var data = await apiClient.SuggestActionsAllAsync();
 
-        var data = await apiClient.SuggestActionsAllAsync();
+            userRequestItems?.Clear();
 
-        userRequestItems = mapper.Map<IEnumerable<SuggestActionModel>>(data).ToList();
+            userRequestItems = mapper.Map<IEnumerable<SuggestActionModel>>(data).ToList();
 
-        availableCategories = data.GroupBy(d => d.CategoryName).Select(g => g.Key).ToList();
+            availableCategories = data.GroupBy(d => d.CategoryName).Select(g => g.Key).ToList();
+
+            return userRequestItems.Count > 0;
+        }
+
+        return hasUpdates;
     }
 
     private async Task AcceptClick(Guid itemId)
