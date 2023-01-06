@@ -67,7 +67,7 @@ public class SuggestActionRepository : ISuggestActionRepository
         using var db = await dbFactory.CreateDbContextAsync();
 
         var source = db.SuggestActionItems
-            .Where(item => item.InitiatorUserId == userId || item.AcceptorUserId == userId)
+            .Where(item => item.InitiatorUserId == userId || (item.AcceptorUserId == userId && item.IsConfirmed))
             .OrderByDescending(item => item.Created)
             .Take(100)
             .ToArray();
@@ -122,7 +122,8 @@ public class SuggestActionRepository : ISuggestActionRepository
         using var db = await dbFactory.CreateDbContextAsync();
 
         var newItem = db.SuggestActionItems
-            .Where(i => i.AcceptorUserId == userId && i.Created > dt)
+            .Where(i => i.AcceptorUserId == userId)
+            .Where(i => i.Created > dt || i.ConfirmDateTime > dt)
             .FirstOrDefault();
 
         return newItem != null;

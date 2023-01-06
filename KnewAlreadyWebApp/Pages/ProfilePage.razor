@@ -26,18 +26,20 @@
             <input type="text" class="form-control" id="email" @bind="contextUser.Email" />
             @if (!contextUser.IsEmailConfirmed)
             {
+
+                @if (isEmailCodeSended)
+                {
+                    <p>Код отправлен</p>
+                }
+                else if (!string.IsNullOrWhiteSpace(contextUser.Email))
+                {
                     <div class="add-info">
-                    @if (isEmailCodeSended)
-                    {
-                                <p>Код отправлен</p>
-                    }
-                    else if (!string.IsNullOrWhiteSpace(contextUser.Email))
-                    {
-                                <button class="btn btn-primary d-inline" @onclick="SendEmailVerifyingCodeAsync">
-                                    Email ящик не подтвержден!. Отправить код подтверждения
-                                </button>
-                    }
+                        <button class="btn btn-primary d-inline" @onclick="SendEmailVerifyingCodeAsync">
+                            Email ящик не подтвержден!. Отправить код подтверждения
+                        </button>
                     </div>
+                }
+
             }
         </div>
         <div>

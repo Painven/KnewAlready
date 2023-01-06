@@ -125,8 +125,19 @@ public partial class LastRequestsPage
 
     private async Task<bool> LoadData()
     {
-        bool hasUpdates = userRequestItems.Count == 0 || await apiClient.HasNewItemsStartedAfterDateAsync(userRequestItems.Max(i => i.Created));
-        if (hasUpdates)
+        bool emptyList = userRequestItems.Count == 0;
+        bool hasUpdates = false;
+
+        if (!emptyList)
+        {
+
+            DateTime maxCreationDate = userRequestItems.Max(i => i.Created);
+            DateTime maxConfirmDate = userRequestItems?.Where(i => i.ConfirmDateTime.HasValue)?.Max(i => i.ConfirmDateTime.Value) ?? DateTime.MinValue;
+            DateTime maxBoth = maxCreationDate > maxConfirmDate ? maxCreationDate : maxConfirmDate;
+            hasUpdates = await apiClient.HasNewItemsStartedAfterDateAsync(maxBoth);
+        }
+
+        if (emptyList || hasUpdates)
         {
             var data = await apiClient.SuggestActionsAllAsync();
 

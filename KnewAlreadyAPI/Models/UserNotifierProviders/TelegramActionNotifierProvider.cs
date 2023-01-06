@@ -25,7 +25,7 @@ public class TelegramActionNotifierProvider : ActionNotifierProviderBase
         {
             var message = new StringBuilder()
                 .AppendLine("Событие выполнено")
-                .AppendLine($"Категория: {data.InitiatorUsername}")
+                .AppendLine($"Категория: {data.CategoryName}")
                 .AppendLine($"Создал пользователь: {data.InitiatorUsername}")
                 .AppendLine($"Подтвердил пользователь: {data.AcceptorUsername}")
                 .AppendLine($"Дата выполнения события: {data.ConfirmDateTime.Value}")
