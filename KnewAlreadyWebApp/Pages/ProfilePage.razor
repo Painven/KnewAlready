@@ -22,8 +22,8 @@
         </div>
         <div>
             <img src="/assets/images/email.png" />
-            <label for="email">Email (для уведомлений)</label>
-            <input type="text" class="form-control" id="email" @bind="contextUser.Email" />
+            <label for="email">Email (для уведомлений, в процессе разработки)</label>
+            <input type="text" class="form-control" id="email" @bind="contextUser.Email" readonly />
             @if (!contextUser.IsEmailConfirmed)
             {
 
