@@ -16,9 +16,13 @@
     </div>
 
     <div>
-        <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="submit" @onclick="LoginUser">
+        <button class="btn btn-lg btn-success p-3 mt-3 w-100" type="submit" @onclick="LoginUser" disabled="@LoginButtonDisabled">
             <span class="oi oi-check"></span>
             Войти
+            @if (isLoginInProgress)
+            {
+                <LoadingSpinner />
+            }
         </button>
         @if (hasErrors)
         {
@@ -38,12 +42,26 @@
 
     string username = string.Empty;
     string password = string.Empty;
+    bool isLoginInProgress = false;
+
+    bool LoginButtonDisabled => isLoginInProgress || string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || (password?.Length ?? 0) < 8;
 
     private async Task LoginUser()
     {
-        var state = await ((CustomAuthProvider)authStateProvider).Login(username, password);
+        isLoginInProgress = true;
+        hasErrors = false;
 
-        hasErrors = state.User.Identity.Name == "anonymous";
+        try
+        {
+            var state = await ((CustomAuthProvider)authStateProvider).Login(username, password);
+
+            hasErrors = state.User.Identity.Name == "anonymous";
+
+        }
+        finally
+        {
+            isLoginInProgress = false;
+        }
 
         if (!hasErrors)
         {

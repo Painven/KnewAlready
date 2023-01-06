@@ -22,27 +22,27 @@
         </div>
         <div>
             <img src="/assets/images/email.png" />
-            <label for="email">Email</label>
+            <label for="email">Email (для уведомлений)</label>
             <input type="text" class="form-control" id="email" @bind="contextUser.Email" />
             @if (!contextUser.IsEmailConfirmed)
             {
-                <div class="add-info">
+                    <div class="add-info">
                     @if (isEmailCodeSended)
                     {
-                        <p>Код отправлен</p>
+                                <p>Код отправлен</p>
                     }
-                    else
+                    else if (!string.IsNullOrWhiteSpace(contextUser.Email))
                     {
-                        <button class="btn btn-primary d-inline" @onclick="SendEmailVerifyingCodeAsync">
-                            Email ящик не подтвержден!. Отправить код подтверждения
-                        </button>
+                                <button class="btn btn-primary d-inline" @onclick="SendEmailVerifyingCodeAsync">
+                                    Email ящик не подтвержден!. Отправить код подтверждения
+                                </button>
                     }
-                </div>
+                    </div>
             }
         </div>
         <div>
             <img src="/assets/images/telegram.png" />
-            <label for="telegram">Telegram</label>
+            <label for="telegram">Telegram (для уведомлений)</label>
             <input type="text" class="form-control" id="telegram" @bind="contextUser.Telegram" />
             <p>Адрес бота: <a href="https://t.me/painven_knewalready_bot" target="_blank">https://t.me/painven_knewalready_bot</a></p>
         </div>

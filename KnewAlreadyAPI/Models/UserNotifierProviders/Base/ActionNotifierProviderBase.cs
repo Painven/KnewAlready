@@ -12,16 +12,17 @@ public abstract class ActionNotifierProviderBase : IActionNotifierProvider
         this.userRepository = userRepository;
     }
 
-    public abstract Task NotifyBothUsers(SuggestActionItemDto data);
-
     protected async Task SendNotifyMessageToBothUsers(SuggestActionItemDto data)
     {
         var initiatorUser = await userRepository.GetUserInfo(data.InitiatorUsername);
         var acceptorUser = await userRepository.GetUserInfo(data.AcceptorUsername);
 
-        await NotifyUser(initiatorUser);
-        await NotifyUser(acceptorUser);
+        await NotifyUser(initiatorUser, data);
+        await NotifyUser(acceptorUser, data);
     }
 
-    protected abstract Task NotifyUser(UserDto? user);
+    protected abstract Task NotifyUser(UserDto? user, SuggestActionItemDto data);
+
+    public abstract Task NotifyBothUsers(SuggestActionItemDto data);
+
 }

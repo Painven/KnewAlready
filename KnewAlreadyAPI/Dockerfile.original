@@ -9,7 +9,6 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["KnewAlreadyAPI/KnewAlreadyAPI.csproj", "KnewAlreadyAPI/"]
 COPY ["KnewAlreadyCore/KnewAlreadyCore.csproj", "KnewAlreadyCore/"]
-COPY ["KnewAlreadyTelegramBot/KnewAlreadyTelegramBot.csproj", "KnewAlreadyTelegramBot/"]
 RUN dotnet restore "KnewAlreadyAPI/KnewAlreadyAPI.csproj"
 COPY . .
 WORKDIR "/src/KnewAlreadyAPI"

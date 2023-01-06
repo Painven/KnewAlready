@@ -17,11 +17,11 @@ public class EmailActionNotifierProvider : ActionNotifierProviderBase
         await SendNotifyMessageToBothUsers(data);
     }
 
-    protected override async Task NotifyUser(UserDto? user)
+    protected override async Task NotifyUser(UserDto? user, SuggestActionItemDto data)
     {
         if (user.IsEmailConfirmed && user.Email != null)
         {
-            await Task.Delay(TimeSpan.FromSeconds(0.5));
+
         }
     }
 }
